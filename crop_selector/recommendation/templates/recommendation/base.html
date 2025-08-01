@@ -1,4 +1,5 @@
 <!-- recommendation/templates/recommendation/base.html -->
+ {% load static %}
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
@@ -14,17 +15,152 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        :root {
+            --bg-overlay-light: rgba(255, 255, 255, 0.95);
+            --bg-overlay-dark: rgba(0, 0, 0, 0.85);
+            --text-light: #333;
+            --text-dark: #fff;
+        }
+
         body {
-            background-image: url("https://images.unsplash.com/photo-1582284540323-3e0b8e7f59c0?auto=format&fit=crop&w=1950&q=80");
+            background-image: 
+                linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(139, 195, 74, 0.05) 100%),
+                url("{% static 'images/farm-bg.jpg' %}");
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease;
         }
+
+        [data-bs-theme="dark"] body {
+            background-image: 
+                linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(139, 195, 74, 0.08) 100%),
+                url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1950&q=80&brightness=1.3&contrast=1.2");
+            filter: brightness(1.2) contrast(1.1);
+        }
+
         .bg-overlay {
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.75) 0%, 
+                rgba(248, 249, 250, 0.80) 50%, 
+                rgba(255, 255, 255, 0.75) 100%
+            );
             min-height: 100vh;
             padding: 2rem;
-            
+            transition: background 0.3s ease;
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+        }
+
+        [data-bs-theme="dark"] .bg-overlay {
+            background: linear-gradient(
+                135deg, 
+                rgba(16, 20, 24, 0.50) 0%, 
+                rgba(33, 37, 41, 0.60) 50%, 
+                rgba(16, 20, 24, 0.50) 100%
+            );
+            backdrop-filter: blur(0.5px);
+            -webkit-backdrop-filter: blur(0.5px);
+        }
+
+        [data-bs-theme="dark"] .text-dark {
+            color: var(--text-dark) !important;
+        }
+
+        .card {
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.85) 0%, 
+                rgba(248, 249, 250, 0.80) 100%
+            );
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-bs-theme="dark"] .card {
+            background: linear-gradient(
+                135deg, 
+                rgba(33, 37, 41, 0.75) 0%, 
+                rgba(52, 58, 64, 0.70) 100%
+            );
+            border-color: rgba(255, 255, 255, 0.20);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-light {
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.88) 0%, 
+                rgba(248, 249, 250, 0.85) 100%
+            ) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-bs-theme="dark"] .navbar-light {
+            background: linear-gradient(
+                135deg, 
+                rgba(33, 37, 41, 0.80) 0%, 
+                rgba(52, 58, 64, 0.75) 100%
+            ) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-bs-theme="dark"] .navbar-light .navbar-brand,
+        [data-bs-theme="dark"] .navbar-light .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        [data-bs-theme="dark"] .navbar-light .nav-link.active {
+            color: #fff !important;
+        }
+
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .hero-overlay {
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.60) 0%, 
+                rgba(76, 175, 80, 0.65) 50%, 
+                rgba(0, 0, 0, 0.60) 100%
+            );
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-bs-theme="dark"] .hero-overlay {
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.55) 0%, 
+                rgba(76, 175, 80, 0.40) 50%, 
+                rgba(0, 0, 0, 0.55) 100%
+            );
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
     </style>
 
@@ -33,59 +169,62 @@
 <body>
     <div class="bg-overlay">
         <!-- Navbar -->
-        <!-- Updated Navbar Section -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="{% url 'home' %}">🌾 Crop Selector</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="{% url 'home' %}">🌾 Crop Selector</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav align-items-center">
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
 
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
-                        🏠 Home
-                    </a>
-                </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                                🏠 Home
+                            </a>
+                        </li>
 
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'recommend' %}active{% endif %}" href="{% url 'recommend' %}">
-                            🌱 Recommend
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            🚪 Logout
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">
-                            📝 Register
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">
-                            🔑 Login
-                        </a>
-                    </li>
-                {% endif %}
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'recommend' %}active{% endif %}" href="{% url 'recommend' %}">
+                                    🌱 Recommend
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'past_recommendations' %}active{% endif %}" href="{% url 'past_recommendations' %}">
+                                    📋 My History
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">
+                                    🚪 Logout ({{ user.username }})
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">
+                                    📝 Register
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">
+                                    🔑 Login
+                                </a>
+                            </li>
+                        {% endif %}
 
-                <!-- Theme Toggle Button -->
-                <li class="nav-item">
-                    <button id="toggleTheme" class="btn btn-outline-secondary ms-3" title="Toggle Light/Dark">
-                        <i class="fa fa-moon"></i>
-                    </button>
-                </li>
+                        <!-- Theme Toggle Button -->
+                        <li class="nav-item">
+                            <button id="toggleTheme" class="btn btn-outline-secondary ms-3 theme-toggle" title="Toggle Light/Dark">
+                                <i class="fa fa-moon" id="theme-icon"></i>
+                            </button>
+                        </li>
 
-            </ul>
-        </div>
-    </div>
-</nav>
-
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
         <!-- Main content -->
         <div class="container">
@@ -96,14 +235,34 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Theme toggle -->
+    <!-- Theme toggle with persistence -->
     <script>
         const toggle = document.getElementById("toggleTheme");
+        const themeIcon = document.getElementById("theme-icon");
+        const html = document.documentElement;
+
+        // Load saved theme on page load
+        const savedTheme = localStorage.getItem('cropSelectorTheme') || 'light';
+        html.setAttribute("data-bs-theme", savedTheme);
+        updateThemeIcon(savedTheme);
+
         toggle.addEventListener("click", () => {
-            const html = document.documentElement;
             const current = html.getAttribute("data-bs-theme");
-            html.setAttribute("data-bs-theme", current === "light" ? "dark" : "light");
+            const newTheme = current === "light" ? "dark" : "light";
+            html.setAttribute("data-bs-theme", newTheme);
+            localStorage.setItem('cropSelectorTheme', newTheme);
+            updateThemeIcon(newTheme);
         });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.className = 'fa fa-sun';
+            } else {
+                themeIcon.className = 'fa fa-moon';
+            }
+        }
     </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,35 +1,207 @@
 {% extends 'recommendation/base.html' %}
-{% load static %}
 
 {% block title %}Home | Crop Selector{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<div class="text-center text-white d-flex align-items-center justify-content-center"
-     style="
-        background-image: url('{% static "images/farm-bg.jpg" %}');
-        background-size: cover;
-        background-position: center;
-        min-height: 90vh;
-        position: relative;
-     ">
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="text-center text-white d-flex align-items-center justify-content-center"
+             style="min-height: 70vh; position: relative;">
 
-    <!-- Dark overlay -->
-    <div class="bg-dark bg-opacity-50 p-5 rounded-4 w-75">
-        <h1 class="display-4 fw-bold">🌾 Welcome to Crop Selector</h1>
-        <p class="lead mt-3">
-            Get the best crop suggestions based on your land, soil, season, and previous crops.
-        </p>
+            <!-- Hero overlay with improved gradient -->
+            <div class="hero-overlay w-75 animate__animated animate__fadeIn">
+                <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">🌾 Welcome to Crop Selector</h1>
+                <p class="lead mt-3 animate__animated animate__fadeInUp animate__delay-1s">
+                    Get the best crop suggestions based on your land, soil, season, and previous crops.
+                    Make informed farming decisions with our AI-powered recommendations.
+                </p>
 
-        <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
-            {% if user.is_authenticated %}
-                <a href="{% url 'recommend' %}" class="btn btn-success btn-lg">🌱 Get Crop Recommendations</a>
-                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-lg">🚪 Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-primary btn-lg">🔑 Login</a>
-                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">📝 Register</a>
-            {% endif %}
+                <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'recommend' %}" class="btn btn-success btn-lg shadow-lg">
+                            🌱 Get Crop Recommendations
+                        </a>
+                        <a href="{% url 'past_recommendations' %}" class="btn btn-outline-light btn-lg shadow-lg">
+                            📋 View My History
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-secondary btn-lg shadow-lg">
+                            🚪 Logout ({{ user.username }})
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg shadow-lg">
+                            🔑 Login
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg shadow-lg">
+                            📝 Register Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Features Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="text-center mb-5">🚀 Why Choose Crop Selector?</h2>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInLeft">
+            <div class="card-body text-center p-4">
+                <div class="mb-3" style="font-size: 3rem;">🎯</div>
+                <h5 class="card-title">Smart Recommendations</h5>
+                <p class="card-text">
+                    Our advanced algorithm considers soil type, pH, climate, and seasonal factors to suggest the best crops for your land.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInUp">
+            <div class="card-body text-center p-4">
+                <div class="mb-3" style="font-size: 3rem;">📊</div>
+                <h5 class="card-title">Track Your History</h5>
+                <p class="card-text">
+                    Keep track of all your past queries and recommendations. Access them anytime to make better farming decisions.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInRight">
+            <div class="card-body text-center p-4">
+                <div class="mb-3" style="font-size: 3rem;">🌱</div>
+                <h5 class="card-title">100+ Crop Database</h5>
+                <p class="card-text">
+                    Access detailed information about over 100 different crops including cereals, pulses, vegetables, fruits, and spices.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+{% if user.is_authenticated %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center p-4">
+                <h4 class="mb-4">📈 Your Farming Journey</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="display-6 text-success fw-bold">{{ user.cropquery_set.count }}</div>
+                        <p class="text-muted">Total Queries Made</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="display-6 text-info fw-bold">100+</div>
+                        <p class="text-muted">Crops in Database</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="display-6 text-warning fw-bold">
+                            {% if user.cropquery_set.exists %}
+                                {{ user.cropquery_set.first.created_at|timesince }}
+                            {% else %}
+                                New
+                            {% endif %}
+                        </div>
+                        <p class="text-muted">
+                            {% if user.cropquery_set.exists %}
+                                Since Last Query
+                            {% else %}
+                                User
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'recommend' %}" class="btn btn-success me-2">
+                        🌱 Make New Query
+                    </a>
+                    <a href="{% url 'past_recommendations' %}" class="btn btn-outline-primary">
+                        📋 View History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .hero-overlay {
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        transition: all 0.3s ease;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+    
+    [data-bs-theme="dark"] .card:hover {
+        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4);
+    }
+    
+    [data-bs-theme="dark"] .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-bs-theme="dark"] .card-title,
+    [data-bs-theme="dark"] .card-text,
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6 {
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    
+    .display-6 {
+        font-size: 2.5rem;
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .shadow-lg {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-overlay {
+            width: 95% !important;
+            padding: 2rem !important;
+        }
+        
+        .display-4 {
+            font-size: 2rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px) scale(1.01);
+        }
+    }
+</style>
 {% endblock %}

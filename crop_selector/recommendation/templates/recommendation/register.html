@@ -1,4 +1,3 @@
-<!-- recommendation/templates/recommendation/register.html -->
 {% extends 'recommendation/base.html' %}
 
 {% block title %}Register | Crop Selector{% endblock %}
@@ -7,38 +6,177 @@
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <div class="card shadow-lg border-0">
-        <div class="card-header bg-success text-white text-center">
-          <h4 class="mb-0">📝 Create an Account</h4>
+      <div class="card shadow-lg border-0 animate__animated animate__fadeInUp">
+        <div class="card-header bg-success text-white text-center py-4">
+          <h4 class="mb-0">🌱 Join Crop Selector</h4>
+          <p class="mb-0 small">Create your account to get personalized crop recommendations</p>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
           <form method="POST" novalidate>
             {% csrf_token %}
             {{ form.non_field_errors }}
 
             {% for field in form %}
             <div class="mb-3">
-              <label class="form-label fw-semibold">{{ field.label }}</label>
-              {{ field }}
+              <label class="form-label fw-semibold">
+                {% if field.name == 'username' %}
+                  👤 {{ field.label }}
+                {% elif field.name == 'password1' %}
+                  🔒 {{ field.label }}
+                {% elif field.name == 'password2' %}
+                  🔐 {{ field.label }}
+                {% else %}
+                  {{ field.label }}
+                {% endif %}
+              </label>
+              
+              {% if field.name == 'username' %}
+                <div class="input-group">
+                  <span class="input-group-text">@</span>
+                  {{ field }}
+                </div>
+              {% elif 'password' in field.name %}
+                <div class="input-group">
+                  <span class="input-group-text">🔒</span>
+                  {{ field }}
+                </div>
+              {% else %}
+                {{ field }}
+              {% endif %}
+              
               {% if field.help_text %}
-              <div class="form-text text-muted">{{ field.help_text }}</div>
+                <div class="form-text text-muted small">{{ field.help_text|safe }}</div>
               {% endif %}
               {% if field.errors %}
-              <div class="text-danger small">{{ field.errors|striptags }}</div>
+                <div class="text-danger small mt-1">
+                  {% for error in field.errors %}
+                    <div>{{ error }}</div>
+                  {% endfor %}
+                </div>
               {% endif %}
             </div>
             {% endfor %}
 
-            <div class="d-grid">
-              <button type="submit" class="btn btn-success btn-lg">Register</button>
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-success btn-lg">
+                🚀 Create My Account
+              </button>
             </div>
           </form>
         </div>
-        <div class="card-footer text-center">
-          Already have an account? <a href="{% url 'login' %}">Login here</a>
+        <div class="card-footer text-center py-3">
+          <small class="text-muted">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
+              🔑 Login Here
+            </a>
+          </small>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Registration Benefits -->
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center p-4">
+        <h5 class="mb-3">🎯 Why Register with Crop Selector?</h5>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="h5 text-success">🌾</div>
+            <h6>Smart Recommendations</h6>
+            <small class="text-muted">Get personalized crop suggestions based on your field conditions</small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="h5 text-info">📊</div>
+            <h6>Track History</h6>
+            <small class="text-muted">Keep track of all your queries and past recommendations</small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="h5 text-warning">🔍</div>
+            <h6>100+ Crops</h6>
+            <small class="text-muted">Access detailed information about diverse crop varieties</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .card-header {
+    border-bottom: none;
+  }
+  
+  .input-group-text {
+    background-color: transparent;
+    border-right: none;
+  }
+  
+  .form-control {
+    border-left: none;
+  }
+  
+  .form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+  }
+  
+  [data-bs-theme="dark"] .input-group-text {
+    color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  
+  [data-bs-theme="dark"] .card-footer {
+    background-color: rgba(33, 37, 41, 0.4);
+    border-top-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  [data-bs-theme="dark"] .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  [data-bs-theme="dark"] .card-title,
+  [data-bs-theme="dark"] h1,
+  [data-bs-theme="dark"] h2,
+  [data-bs-theme="dark"] h3,
+  [data-bs-theme="dark"] h4,
+  [data-bs-theme="dark"] h5,
+  [data-bs-theme="dark"] h6 {
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+  
+  .form-text {
+    line-height: 1.4;
+  }
+  
+  .form-text ul {
+    margin-bottom: 0;
+    padding-left: 1rem;
+  }
+  
+  @media (max-width: 576px) {
+    .card-body {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>
 {% endblock %}

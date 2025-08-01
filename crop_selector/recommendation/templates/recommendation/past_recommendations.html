@@ -1,0 +1,158 @@
+{% extends 'recommendation/base.html' %}
+
+{% block title %}My Recommendation History | Crop Selector{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">📋 My Recommendation History</h2>
+            <p class="text-center text-muted mb-5">View all your past crop recommendations and queries</p>
+        </div>
+    </div>
+
+    {% if queries_with_crops %}
+        {% for item in queries_with_crops %}
+        <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    🗓️ Query from {{ item.query.created_at|date:"M d, Y H:i" }}
+                </h5>
+                <span class="badge bg-info">{{ item.total_matches }} matches found</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>🌱 Field Conditions:</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>Soil:</strong> {{ item.query.soil_texture|capfirst }}</li>
+                            <li><strong>pH:</strong> {{ item.query.soil_ph }}</li>
+                            <li><strong>Organic Matter:</strong> {{ item.query.organic_matter|capfirst }}</li>
+                            <li><strong>Drainage:</strong> {{ item.query.drainage_status|capfirst }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>🌦️ Climate Conditions:</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>Rainfall:</strong> {{ item.query.rainfall_mm }} mm</li>
+                            <li><strong>Temperature:</strong> {{ item.query.avg_temperature }}°C</li>
+                            <li><strong>Season:</strong> {{ item.query.season|capfirst }}</li>
+                            {% if item.query.previous_crop %}
+                                <li><strong>Previous Crop:</strong> {{ item.query.previous_crop|capfirst }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <h6>🏆 Top 3 Recommended Crops:</h6>
+                <div class="row">
+                    {% for crop in item.crops %}
+                    <div class="col-md-4 mb-2">
+                        <div class="card h-100 border-success">
+                            <div class="card-body p-2">
+                                <h6 class="card-title small">{{ crop.name }}</h6>
+                                <p class="card-text small text-muted">{{ crop.description|truncatewords:10 }}</p>
+                                <a href="{% url 'crop_detail' crop.id %}" class="btn btn-sm btn-outline-success">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="text-end mt-3">
+                    <a href="{% url 'view_past_recommendation' item.query.id %}" class="btn btn-primary btn-sm">
+                        🔍 View All Recommendations
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="History pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="text-center">
+            <div class="card shadow-sm">
+                <div class="card-body py-5">
+                    <h4>📭 No Recommendations Yet</h4>
+                    <p class="text-muted">You haven't made any crop recommendations yet.</p>
+                    <a href="{% url 'recommend' %}" class="btn btn-success btn-lg">
+                        🌱 Get Your First Recommendation
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'recommend' %}" class="btn btn-success">
+            ➕ New Recommendation
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-secondary">
+            🏠 Back to Home
+        </a>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    [data-bs-theme="dark"] .card {
+        background-color: rgba(33, 37, 41, 0.75);
+        border-color: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    
+    [data-bs-theme="dark"] .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    [data-bs-theme="dark"] .card-title,
+    [data-bs-theme="dark"] .card-text,
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6 {
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+</style>
+{% endblock %}

@@ -1,3 +1,5 @@
+# recommendation/urls.py
+
 from django.urls import path
 from . import views
 
@@ -9,4 +11,6 @@ urlpatterns = [
     path('recommend/', views.recommend_crop, name='recommend'),
     path('results/', views.recommendation_results, name='results'),
     path('crop/<int:pk>/', views.crop_detail, name='crop_detail'),
+    path('history/', views.past_recommendations, name='past_recommendations'),
+    path('history/<int:query_id>/', views.view_past_recommendation, name='view_past_recommendation'),
 ]

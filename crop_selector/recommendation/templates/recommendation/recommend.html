@@ -1,49 +1,305 @@
 {% extends 'recommendation/base.html' %}
-{% block title %}Recommend a Crop | Crop Selector{% endblock %}
+{% block title %}Get Crop Recommendations | Crop Selector{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white text-center">
-                    <h3>🌿 Get Crop Recommendations</h3>
-                    <p class="mb-0">Fill in your field and climate details to get the best crop suggestions.</p>
+            <div class="card shadow-lg border-0 animate__animated animate__fadeInUp">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h3 class="mb-2">🌿 Get Smart Crop Recommendations</h3>
+                    <p class="mb-0">Fill in your field and climate details to get personalized crop suggestions</p>
                 </div>
-                <div class="card-body">
-                    <form method="POST" novalidate>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" novalidate id="cropRecommendationForm">
                         {% csrf_token %}
                         {{ form.non_field_errors }}
 
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.help_text %}
-                                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                        <!-- Soil Information Section -->
+                        <div class="section-header mb-3">
+                            <h5 class="text-success">🌱 Soil Information</h5>
+                            <hr class="text-success">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.soil_texture.id_for_label }}" class="form-label fw-semibold">
+                                    🏔️ {{ form.soil_texture.label }}
+                                </label>
+                                {{ form.soil_texture }}
+                                {% if form.soil_texture.help_text %}
+                                    <div class="form-text text-muted">{{ form.soil_texture.help_text }}</div>
                                 {% endif %}
-                                {% if field.errors %}
-                                    <div class="text-danger small">{{ field.errors|striptags }}</div>
+                                {% if form.soil_texture.errors %}
+                                    <div class="text-danger small">{{ form.soil_texture.errors|striptags }}</div>
                                 {% endif %}
                             </div>
-                        {% endfor %}
 
-                        <div class="d-flex justify-content-center gap-3 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg px-4">
-                                🔍 Get Recommendations
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.soil_ph.id_for_label }}" class="form-label fw-semibold">
+                                    ⚖️ {{ form.soil_ph.label }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">pH</span>
+                                    {{ form.soil_ph }}
+                                </div>
+                                <div class="form-text text-muted">Typical range: 4.0-9.0 (7.0 is neutral)</div>
+                                {% if form.soil_ph.errors %}
+                                    <div class="text-danger small">{{ form.soil_ph.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.organic_matter.id_for_label }}" class="form-label fw-semibold">
+                                    🍃 {{ form.organic_matter.label }}
+                                </label>
+                                {{ form.organic_matter }}
+                                {% if form.organic_matter.errors %}
+                                    <div class="text-danger small">{{ form.organic_matter.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.drainage_status.id_for_label }}" class="form-label fw-semibold">
+                                    💧 {{ form.drainage_status.label }}
+                                </label>
+                                {{ form.drainage_status }}
+                                {% if form.drainage_status.errors %}
+                                    <div class="text-danger small">{{ form.drainage_status.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Climate Information Section -->
+                        <div class="section-header mb-3 mt-4">
+                            <h5 class="text-info">🌦️ Climate Information</h5>
+                            <hr class="text-info">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.rainfall_mm.id_for_label }}" class="form-label fw-semibold">
+                                    🌧️ {{ form.rainfall_mm.label }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">🌧️</span>
+                                    {{ form.rainfall_mm }}
+                                    <span class="input-group-text">mm</span>
+                                </div>
+                                <div class="form-text text-muted">Annual rainfall in millimeters</div>
+                                {% if form.rainfall_mm.errors %}
+                                    <div class="text-danger small">{{ form.rainfall_mm.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.avg_temperature.id_for_label }}" class="form-label fw-semibold">
+                                    🌡️ {{ form.avg_temperature.label }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">🌡️</span>
+                                    {{ form.avg_temperature }}
+                                    <span class="input-group-text">°C</span>
+                                </div>
+                                <div class="form-text text-muted">Average temperature during growing season</div>
+                                {% if form.avg_temperature.errors %}
+                                    <div class="text-danger small">{{ form.avg_temperature.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Crop Planning Section -->
+                        <div class="section-header mb-3 mt-4">
+                            <h5 class="text-warning">📅 Crop Planning</h5>
+                            <hr class="text-warning">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.season.id_for_label }}" class="form-label fw-semibold">
+                                    📅 {{ form.season.label }}
+                                </label>
+                                {{ form.season }}
+                                {% if form.season.errors %}
+                                    <div class="text-danger small">{{ form.season.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.previous_crop.id_for_label }}" class="form-label fw-semibold">
+                                    🔄 {{ form.previous_crop.label }}
+                                </label>
+                                {{ form.previous_crop }}
+                                <div class="form-text text-muted">Optional: Helps with crop rotation recommendations</div>
+                                {% if form.previous_crop.errors %}
+                                    <div class="text-danger small">{{ form.previous_crop.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-3 mt-5">
+                            <button type="submit" class="btn btn-success btn-lg px-5" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner"></span>
+                                🔍 Get My Recommendations
                             </button>
+                            <a href="{% url 'past_recommendations' %}" class="btn btn-outline-info btn-lg">
+                                📋 View History
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Help Section -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="text-center mb-4">💡 Need Help?</h5>
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="h4 text-success">🌱</div>
+                            <h6>Soil Texture</h6>
+                            <small class="text-muted">
+                                Sandy: Drains fast, gritty feel<br>
+                                Clay: Sticky, holds water<br>
+                                Loamy: Best of both worlds
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="h4 text-info">💧</div>
+                            <h6>Drainage</h6>
+                            <small class="text-muted">
+                                Well Drained: No standing water<br>
+                                Moderate: Drains in 4-6 hours<br>
+                                Poor: Water stays >24 hours
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="h4 text-warning">📅</div>
+                            <h6>Seasons</h6>
+                            <small class="text-muted">
+                                Kharif: Monsoon (Jun-Oct)<br>
+                                Rabi: Winter (Oct-Mar)<br>
+                                Zaid: Summer (Mar-Jun)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
+
 <style>
     .card {
+        border-radius: 15px;
         transition: transform 0.3s ease;
     }
+    
     .card:hover {
-        transform: scale(1.02);
+        transform: translateY(-2px);
     }
+    
+    .section-header h5 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-header hr {
+        height: 2px;
+        opacity: 0.6;
+    }
+    
+    .input-group-text {
+        background-color: transparent;
+        border-right: none;
+    }
+    
+    .form-control {
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+    
+    [data-bs-theme="dark"] .input-group-text {
+        color: rgba(255, 255, 255, 0.75);
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    [data-bs-theme="dark"] .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    [data-bs-theme="dark"] .section-header hr {
+        opacity: 0.5;
+    }
+
+    [data-bs-theme="dark"] .card-title,
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6 {
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem 1rem;
+        }
+        
+        .btn-lg {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Add loading state to form submission
+    document.getElementById('cropRecommendationForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('submitSpinner');
+        
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing Your Field...';
+    });
+
+    // Add form validation feedback
+    const form = document.getElementById('cropRecommendationForm');
+    const inputs = form.querySelectorAll('input, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+    });
+</script>
+{% endblock %}
