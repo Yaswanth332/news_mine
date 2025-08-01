@@ -1,0 +1,49 @@
+{% extends 'recommendation/base.html' %}
+{% block title %}{{ crop.name }} Details | Crop Selector{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        {% if crop.image %}
+                            <img src="{{ crop.image.url }}" alt="{{ crop.name }}" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;">
+                        {% else %}
+                            <img src="https://via.placeholder.com/500x300.png?text=No+Image" alt="No Image" class="img-fluid rounded-start">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <h2 class="card-title text-success">{{ crop.name }}</h2>
+                            <p class="card-text">{{ crop.description }}</p>
+
+                            <h5 class="mt-4">📌 Crop Requirements</h5>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item"><strong>Soil Texture:</strong> {{ crop.soil_texture|capfirst }}</li>
+                                <li class="list-group-item"><strong>Soil pH Range:</strong> {{ crop.soil_ph_min }} – {{ crop.soil_ph_max }}</li>
+                                <li class="list-group-item"><strong>Organic Matter:</strong> {{ crop.organic_matter|capfirst }}</li>
+                                <li class="list-group-item"><strong>Drainage:</strong> {{ crop.drainage_status|capfirst }}</li>
+                                <li class="list-group-item"><strong>Rainfall Range:</strong> {{ crop.rainfall_min }} – {{ crop.rainfall_max }} mm</li>
+                                <li class="list-group-item"><strong>Temperature Range:</strong> {{ crop.temperature_min }} – {{ crop.temperature_max }} °C</li>
+                                <li class="list-group-item"><strong>Season:</strong> {{ crop.season|capfirst }}</li>
+                                <li class="list-group-item"><strong>Previous Crop Recommended:</strong> {{ crop.previous_crop|capfirst }}</li>
+                            </ul>
+
+                            <a href="{% url 'recommend' %}" class="btn btn-secondary mt-3">⬅ Back to Recommendations</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<style>
+    .card {
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: scale(1.02);
+    }

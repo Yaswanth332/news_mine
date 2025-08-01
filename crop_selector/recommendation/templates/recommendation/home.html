@@ -1,0 +1,35 @@
+{% extends 'recommendation/base.html' %}
+{% load static %}
+
+{% block title %}Home | Crop Selector{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="text-center text-white d-flex align-items-center justify-content-center"
+     style="
+        background-image: url('{% static "images/farm-bg.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        min-height: 90vh;
+        position: relative;
+     ">
+
+    <!-- Dark overlay -->
+    <div class="bg-dark bg-opacity-50 p-5 rounded-4 w-75">
+        <h1 class="display-4 fw-bold">🌾 Welcome to Crop Selector</h1>
+        <p class="lead mt-3">
+            Get the best crop suggestions based on your land, soil, season, and previous crops.
+        </p>
+
+        <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'recommend' %}" class="btn btn-success btn-lg">🌱 Get Crop Recommendations</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-lg">🚪 Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg">🔑 Login</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">📝 Register</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
