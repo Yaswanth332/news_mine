@@ -3,13 +3,14 @@
 {% block title %}Login | Crop Selector{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg border-0 animate__animated animate__fadeInUp">
-        <div class="card-header bg-primary text-white text-center py-4">
-          <h4 class="mb-0">🔐 Welcome Back!</h4>
-          <p class="mb-0 small">Login to access your crop recommendations</p>
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-md-4 col-lg-3">
+      <div class="auth-card shadow-lg border-0 animate__animated animate__fadeInUp">
+        <div class="card-header text-center py-4">
+          <div class="auth-icon mb-3">🔐</div>
+          <h4 class="mb-1 fw-bold">Welcome Back</h4>
+          <p class="mb-0 text-muted small">Sign in to your account</p>
         </div>
         <div class="card-body p-4">
           {% if messages %}
@@ -21,48 +22,40 @@
             {% endfor %}
           {% endif %}
 
-          <form method="POST" novalidate>
+          <form method="POST" novalidate class="auth-form">
             {% csrf_token %}
             {{ form.non_field_errors }}
 
-            {% for field in form %}
             <div class="mb-3">
-              <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                {% if field.name == 'username' %}
-                  👤 {{ field.label }}
-                {% elif field.name == 'password' %}
-                  🔒 {{ field.label }}
-                {% else %}
-                  {{ field.label }}
-                {% endif %}
-              </label>
-              
-              {% if field.name == 'username' %}
-                <div class="input-group">
-                  <span class="input-group-text">@</span>
-                  {{ field }}
-                </div>
-              {% elif field.name == 'password' %}
-                <div class="input-group">
-                  <span class="input-group-text">🔒</span>
-                  {{ field }}
-                </div>
-              {% else %}
-                {{ field }}
-              {% endif %}
-              
-              {% if field.help_text %}
-              <div class="form-text text-muted">{{ field.help_text }}</div>
-              {% endif %}
-              {% if field.errors %}
-              <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+              <div class="input-group">
+                <span class="input-group-text border-end-0">
+                  <i class="fas fa-user text-muted"></i>
+                </span>
+                <input type="text" name="username" class="form-control border-start-0 ps-0" 
+                       placeholder="Username" required
+                       value="{{ form.username.value|default:'' }}">
+              </div>
+              {% if form.username.errors %}
+                <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
               {% endif %}
             </div>
-            {% endfor %}
+
+            <div class="mb-4">
+              <div class="input-group">
+                <span class="input-group-text border-end-0">
+                  <i class="fas fa-lock text-muted"></i>
+                </span>
+                <input type="password" name="password" class="form-control border-start-0 ps-0" 
+                       placeholder="Password" required>
+              </div>
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
             <div class="d-grid mb-3">
-              <button type="submit" class="btn btn-primary btn-lg">
-                🚀 Login to Dashboard
+              <button type="submit" class="btn btn-primary btn-lg auth-btn">
+                Sign In
               </button>
             </div>
           </form>
@@ -70,8 +63,8 @@
         <div class="card-footer text-center py-3">
           <small class="text-muted">
             New to Crop Selector? 
-            <a href="{% url 'register' %}" class="text-decoration-none fw-bold">
-              📝 Create Account
+            <a href="{% url 'register' %}" class="text-decoration-none fw-semibold text-success">
+              Create Account
             </a>
           </small>
         </div>
@@ -81,58 +74,145 @@
 </div>
 
 <style>
-  .card {
-    border-radius: 15px;
+  .auth-card {
+    border-radius: 20px;
     overflow: hidden;
-  }
-  
-  .card-header {
-    border-bottom: none;
-  }
-  
-  .input-group-text {
-    background-color: transparent;
-    border-right: none;
-  }
-  
-  .form-control {
-    border-left: none;
-  }
-  
-  .form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-  }
-  
-  [data-bs-theme="dark"] .input-group-text {
-    color: rgba(255, 255, 255, 0.75);
-    border-color: rgba(255, 255, 255, 0.25);
-  }
-  
-  [data-bs-theme="dark"] .card-footer {
-    background-color: rgba(33, 37, 41, 0.4);
-    border-top-color: rgba(255, 255, 255, 0.15);
-  }
-  
-  [data-bs-theme="dark"] .text-muted {
-    color: rgba(255, 255, 255, 0.8) !important;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: linear-gradient(
+      135deg, 
+      rgba(255, 255, 255, 0.25) 0%, 
+      rgba(248, 249, 250, 0.30) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
   }
 
-  [data-bs-theme="dark"] .card-title,
-  [data-bs-theme="dark"] h1,
-  [data-bs-theme="dark"] h2,
-  [data-bs-theme="dark"] h3,
-  [data-bs-theme="dark"] h4,
-  [data-bs-theme="dark"] h5,
-  [data-bs-theme="dark"] h6 {
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  [data-bs-theme="dark"] .auth-card {
+    background: linear-gradient(
+      135deg, 
+      rgba(33, 37, 41, 0.75) 0%, 
+      rgba(52, 58, 64, 0.70) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.20);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   }
-  
-  @media (max-width: 576px) {
+
+  .auth-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  }
+
+  [data-bs-theme="dark"] .auth-card:hover {
+    box-shadow: 0 25px 50px rgba(76, 175, 80, 0.3);
+  }
+
+  .card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  [data-bs-theme="dark"] .card-header {
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .card-footer {
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  [data-bs-theme="dark"] .card-footer {
+    border-top-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .auth-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-group-text {
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .form-control {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  [data-bs-theme="dark"] .form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  [data-bs-theme="dark"] .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  [data-bs-theme="dark"] .input-group-text {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .form-control:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  }
+
+  [data-bs-theme="dark"] .form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .auth-btn {
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+  }
+
+  .auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+  }
+
+  [data-bs-theme="dark"] .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  [data-bs-theme="dark"] h4,
+  [data-bs-theme="dark"] p {
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Remove background overlay for auth pages */
+  .bg-overlay {
+    background: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Full screen background for auth pages */
+  body {
+    min-height: 100vh;
+  }
+
+  @media (max-width: 600px) {
+    .col-md-4 {
+      width: 90%;
+    }
+    
     .card-body {
       padding: 2rem 1.5rem;
+    }
+    
+    .auth-icon {
+      font-size: 2.5rem;
     }
   }
 </style>
