@@ -16,14 +16,14 @@ class CropQueryForm(forms.ModelForm):
             ('clay', 'Clay (Sticky feel, holds water)'),
             ('loamy', 'Loamy (Balanced feel, best for most crops)'),
         ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select-custom'})
     )
 
     soil_ph = forms.FloatField(
         label="Soil pH",
         min_value=0,
         max_value=14,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control-custom'})
     )
 
     organic_matter = forms.ChoiceField(
@@ -33,7 +33,7 @@ class CropQueryForm(forms.ModelForm):
             ('medium', 'Medium (Moderate fertility)'),
             ('high', 'High (Dark, rich, fertile soil)'),
         ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select-custom'})
     )
 
     drainage_status = forms.ChoiceField(
@@ -43,17 +43,17 @@ class CropQueryForm(forms.ModelForm):
             ('moderate', 'Moderate (Water drains in 4–6 hrs)'),
             ('poor', 'Poor (Water stays >24 hrs after rain)'),
         ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select-custom'})
     )
 
     rainfall_mm = forms.FloatField(
         label="Rainfall (mm)",
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control-custom'})
     )
 
     avg_temperature = forms.FloatField(
         label="Temperature (°C)",
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control-custom'})
     )
 
     season = forms.ChoiceField(
@@ -64,7 +64,7 @@ class CropQueryForm(forms.ModelForm):
             ('zaid', 'Zaid (Summer crops: Mar–June)'),
             ('any', 'Any Season'),
         ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select-custom'})
     )
 
     previous_crop = forms.ChoiceField(
@@ -80,5 +80,5 @@ class CropQueryForm(forms.ModelForm):
             ('sugarcane', 'Sugarcane'),
             ('others', 'Other / Not Listed'),
         ],
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select-custom'})
     )

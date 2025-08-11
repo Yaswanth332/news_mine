@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import CropQuery, CropMaster
 from .forms import CropQueryForm
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 def home(request):
     return render(request, 'recommendation/home.html')
@@ -27,7 +28,7 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('recommend')
+            return redirect('recommend_crop')
     else:
         form = AuthenticationForm()
     return render(request, 'recommendation/login.html', {'form': form})
@@ -98,7 +99,11 @@ def recommend_crop(request):
             })
     else:
         form = CropQueryForm()
-    return render(request, 'recommendation/recommend.html', {'form': form})
+    
+    # Get the static URL for the background image
+    background_image_url = staticfiles_storage.url('images/farm-bg.jpg')
+    
+    return render(request, 'recommendation/recommend.html', {'form': form, 'background_image_url': background_image_url})
 
 @login_required
 def past_recommendations(request):

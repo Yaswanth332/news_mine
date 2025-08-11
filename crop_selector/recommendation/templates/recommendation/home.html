@@ -1,85 +1,152 @@
+#
 {% extends 'recommendation/base.html' %}
-
+{% load static %}
 {% block title %}Home | Crop Selector{% endblock %}
-
 {% block content %}
-<!-- Hero Section -->
-<div class="row justify-content-center">
-    <div class="col-12">
-        <div class="text-center text-white d-flex align-items-center justify-content-center"
-             style="min-height: 70vh; position: relative;">
-
-            <!-- Hero overlay with improved gradient -->
-            <div class="hero-overlay w-75 animate__animated animate__fadeIn">
-                <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">🌾 Welcome to Crop Selector</h1>
-                <p class="lead mt-3 animate__animated animate__fadeInUp animate__delay-1s">
-                    Get the best crop suggestions based on your land, soil, season, and previous crops.
-                    Make informed farming decisions with our AI-powered recommendations.
-                </p>
-
-                <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'recommend' %}" class="btn btn-success btn-lg shadow-lg">
-                            🌱 Get Crop Recommendations
-                        </a>
-                        <a href="{% url 'past_recommendations' %}" class="btn btn-outline-light btn-lg shadow-lg">
-                            📋 View My History
-                        </a>
-                        <a href="{% url 'logout' %}" class="btn btn-outline-secondary btn-lg shadow-lg">
-                            🚪 Logout ({{ user.username }})
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg shadow-lg">
-                            🔑 Login
-                        </a>
-                        <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg shadow-lg">
-                            📝 Register Now
-                        </a>
-                    {% endif %}
+<!-- Hero Section with Parallax Effect -->
+<div class="hero-section">
+    <div class="parallax-bg" style="background-image: linear-gradient(135deg, rgba(76, 175, 80, 0.8) 0%, rgba(139, 195, 74, 0.6) 100%), url('{% static 'images/farm-bg.jpg' %}');">
+    </div>
+    <div class="hero-content">
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-70">
+                <div class="col-lg-8">
+                    <div class="hero-card animate__animated animate__fadeIn">
+                        <div class="hero-icon-container">
+                            <div class="hero-icon">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L12 22M12 22C8.13401 22 5 18.866 5 15C5 11.134 8.13401 8 12 8M12 22C15.866 22 19 18.866 19 15C19 11.134 15.866 8 12 8M12 8C12 8 12 6 12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4C8 5.10457 8.89543 6 10 6M12 8C12 8 12 6 12 4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4C16 5.10457 15.1046 6 14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h1 class="hero-title animate__animated animate__fadeInDown animate__delay-0.5s">Crop Selector</h1>
+                        <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                            Smart crop recommendations powered by AI. Make informed farming decisions based on your land, soil, season, and previous crops.
+                        </p>
+                        <div class="hero-buttons animate__animated animate__fadeInUp animate__delay-1.5s">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'recommend_crop' %}" class="btn btn-primary btn-lg ripple hover-effect">
+                                    <span class="btn-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 2L12 22M12 22C8.13401 22 5 18.866 5 15C5 11.134 8.13401 8 12 8M12 22C15.866 22 19 18.866 19 15C19 11.134 15.866 8 12 8M12 8C12 8 12 6 12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4C8 5.10457 8.89543 6 10 6M12 8C12 8 12 6 12 4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4C16 5.10457 15.1046 6 14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    Get Recommendations
+                                </a>
+                                <a href="{% url 'past_recommendations' %}" class="btn btn-outline-light btn-lg ripple hover-effect">
+                                    <span class="btn-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H12.01M9 16H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    My History
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-primary btn-lg ripple hover-effect">
+                                    <span class="btn-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M15 7H19C20.1046 7 21 7.89543 21 9V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V9C3 7.89543 3.89543 7 5 7H9M15 3V7M9 3V7M15 7H9M12 12V16M12 16H10M12 16H14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    Login
+                                </a>
+                                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg ripple hover-effect">
+                                    <span class="btn-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    Register
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="scroll-indicator animate__animated animate__bounce animate__infinite animate__slower">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
 </div>
 
 <!-- Features Section -->
-<div class="row mt-5">
-    <div class="col-12">
-        <h2 class="text-center mb-5">🚀 Why Choose Crop Selector?</h2>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInLeft">
-            <div class="card-body text-center p-4">
-                <div class="mb-3" style="font-size: 3rem;">🎯</div>
-                <h5 class="card-title">Smart Recommendations</h5>
-                <p class="card-text">
-                    Our advanced algorithm considers soil type, pH, climate, and seasonal factors to suggest the best crops for your land.
-                </p>
-            </div>
+<div class="features-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5 scroll-animate">
+            <h2 class="section-title">Why Choose Crop Selector?</h2>
+            <div class="section-divider"></div>
+            <p class="section-subtitle">Advanced features designed to optimize your farming decisions</p>
         </div>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInUp">
-            <div class="card-body text-center p-4">
-                <div class="mb-3" style="font-size: 3rem;">📊</div>
-                <h5 class="card-title">Track Your History</h5>
-                <p class="card-text">
-                    Keep track of all your past queries and recommendations. Access them anytime to make better farming decisions.
-                </p>
+        
+        <div class="row g-4">
+            <div class="col-md-4 scroll-animate" data-delay="100">
+                <div class="feature-card hover-lift">
+                    <div class="feature-icon">
+                        <div class="icon-bg hover-rotate">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">Smart Recommendations</h3>
+                    <p class="feature-text">Our advanced algorithm considers soil type, pH, climate, and seasonal factors to suggest the best crops for your land.</p>
+                    <div class="feature-link">
+                        <a href="{% url 'recommend_crop' %}" class="text-decoration-none hover-link">
+                            Learn more
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInRight">
-            <div class="card-body text-center p-4">
-                <div class="mb-3" style="font-size: 3rem;">🌱</div>
-                <h5 class="card-title">100+ Crop Database</h5>
-                <p class="card-text">
-                    Access detailed information about over 100 different crops including cereals, pulses, vegetables, fruits, and spices.
-                </p>
+            
+            <div class="col-md-4 scroll-animate" data-delay="200">
+                <div class="feature-card hover-lift">
+                    <div class="feature-icon">
+                        <div class="icon-bg hover-rotate">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">Track Your History</h3>
+                    <p class="feature-text">Keep track of all your past queries and recommendations. Access them anytime to make better farming decisions.</p>
+                    <div class="feature-link">
+                        <a href="{% url 'past_recommendations' %}" class="text-decoration-none hover-link">
+                            Learn more
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 scroll-animate" data-delay="300">
+                <div class="feature-card hover-lift">
+                    <div class="feature-icon">
+                        <div class="icon-bg hover-rotate">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">100+ Crop Database</h3>
+                    <p class="feature-text">Access detailed information about over 100 different crops including cereals, pulses, vegetables, fruits, and spices.</p>
+                    <div class="feature-link">
+                        <a href="{% url 'recommend_crop' %}" class="text-decoration-none hover-link">
+                            Learn more
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -87,121 +154,1034 @@
 
 <!-- Statistics Section -->
 {% if user.is_authenticated %}
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center p-4">
-                <h4 class="mb-4">📈 Your Farming Journey</h4>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="display-6 text-success fw-bold">{{ user.cropquery_set.count }}</div>
-                        <p class="text-muted">Total Queries Made</p>
+<div class="stats-section py-5">
+    <div class="container">
+        <div class="stats-card scroll-animate">
+            <div class="stats-header text-center mb-4">
+                <h3 class="stats-title">Your Farming Journey</h3>
+                <p class="stats-subtitle">Track your progress and achievements</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-item hover-pulse">
+                        <div class="stat-icon hover-scale">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H12.01M9 16H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-number" data-target="{{ user.cropquery_set.count }}">0</div>
+                        <div class="stat-label">Total Queries Made</div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="display-6 text-info fw-bold">100+</div>
-                        <p class="text-muted">Crops in Database</p>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="stat-item hover-pulse">
+                        <div class="stat-icon hover-scale">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">Crops in Database</div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="display-6 text-warning fw-bold">
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="stat-item hover-pulse">
+                        <div class="stat-icon hover-scale">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 8V12L15 15M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-label">
                             {% if user.cropquery_set.exists %}
-                                {{ user.cropquery_set.first.created_at|timesince }}
+                                <span class="time-ago">{{ user.cropquery_set.first.created_at|timesince }}</span>
                             {% else %}
-                                New
+                                New User
                             {% endif %}
                         </div>
-                        <p class="text-muted">
+                        <div class="stat-sublabel">
                             {% if user.cropquery_set.exists %}
                                 Since Last Query
                             {% else %}
-                                User
+                                Welcome!
                             {% endif %}
-                        </p>
+                        </div>
                     </div>
                 </div>
-                <div class="mt-3">
-                    <a href="{% url 'recommend' %}" class="btn btn-success me-2">
-                        🌱 Make New Query
-                    </a>
-                    <a href="{% url 'past_recommendations' %}" class="btn btn-outline-primary">
-                        📋 View History
-                    </a>
-                </div>
+            </div>
+            
+            <div class="stats-actions text-center mt-4">
+                <a href="{% url 'recommend_crop' %}" class="btn btn-primary ripple hover-effect me-2">
+                    <span class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L12 22M12 22C8.13401 22 5 18.866 5 15C5 11.134 8.13401 8 12 8M12 22C15.866 22 19 18.866 19 15C19 11.134 15.866 8 12 8M12 8C12 8 12 6 12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4C8 5.10457 8.89543 6 10 6M12 8C12 8 12 6 12 4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4C16 5.10457 15.1046 6 14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    Make New Query
+                </a>
+                <a href="{% url 'past_recommendations' %}" class="btn btn-outline-primary ripple hover-effect">
+                    <span class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H12.01M9 16H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    View History
+                </a>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
 
+<!-- Testimonials Section -->
+<div class="testimonials-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5 scroll-animate">
+            <h2 class="section-title">What Farmers Say</h2>
+            <div class="section-divider"></div>
+            <p class="section-subtitle">Hear from the agricultural community</p>
+        </div>
+        
+        <div class="testimonials-slider">
+            <div class="row g-4">
+                <div class="col-md-4 scroll-animate" data-delay="100">
+                    <div class="testimonial-card hover-lift">
+                        <div class="testimonial-content">
+                            <div class="testimonial-icon hover-bounce">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">Crop Selector helped me increase my yield by 30% last season. The recommendations were spot on for my soil type and climate conditions.</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar hover-grow">
+                                <span>JD</span>
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">John Doe</h4>
+                                <p class="author-title">Wheat Farmer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 scroll-animate" data-delay="200">
+                    <div class="testimonial-card hover-lift">
+                        <div class="testimonial-content">
+                            <div class="testimonial-icon hover-bounce">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">I've been farming for 20 years, but Crop Selector taught me new crop combinations I never would have tried. My profits are up significantly.</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar hover-grow">
+                                <span>SM</span>
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">Sarah Miller</h4>
+                                <p class="author-title">Organic Farmer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 scroll-animate" data-delay="300">
+                    <div class="testimonial-card hover-lift">
+                        <div class="testimonial-content">
+                            <div class="testimonial-icon hover-bounce">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p class="testimonial-text">The history tracking feature is invaluable. I can see what worked in previous seasons and make better decisions for the future.</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar hover-grow">
+                                <span>RJ</span>
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">Robert Johnson</h4>
+                                <p class="author-title">Corn Farmer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section py-5">
+    <div class="container">
+        <div class="cta-card scroll-animate">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="cta-content">
+                        <h3 class="cta-title">Ready to optimize your farming?</h3>
+                        <p class="cta-text">Join thousands of farmers who are already using Crop Selector to make better decisions and increase their yields.</p>
+                        <div class="cta-buttons">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'recommend_crop' %}" class="btn btn-primary btn-lg ripple hover-effect me-2">
+                                    Get Recommendations
+                                </a>
+                            {% else %}
+                                <a href="{% url 'register' %}" class="btn btn-primary btn-lg ripple hover-effect me-2">
+                                    Sign Up Free
+                                </a>
+                                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg ripple hover-effect">
+                                    Login
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="cta-image hover-tilt">
+                        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_touohxv0.json" background="transparent" speed="1" loop autoplay></lottie-player>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-    .hero-overlay {
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        transition: all 0.3s ease;
-    }
-    
-    .card {
-        transition: all 0.3s ease;
-        border-radius: 15px;
+    /* Hero Section Styles */
+    .hero-section {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
         overflow: hidden;
     }
     
-    .card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    .parallax-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 120%;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        z-index: -1;
+        will-change: transform;
     }
     
-    [data-bs-theme="dark"] .card:hover {
-        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4);
+    [data-bs-theme="dark"] .parallax-bg {
+        background-image: 
+            linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.8) 100%),
+            url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1950&q=80&brightness=1.3&contrast=1.2");
     }
     
-    [data-bs-theme="dark"] .text-muted {
-        color: rgba(255, 255, 255, 0.8) !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    [data-bs-theme="dark"] .card-title,
-    [data-bs-theme="dark"] .card-text,
-    [data-bs-theme="dark"] h1,
-    [data-bs-theme="dark"] h2,
-    [data-bs-theme="dark"] h3,
-    [data-bs-theme="dark"] h4,
-    [data-bs-theme="dark"] h5,
-    [data-bs-theme="dark"] h6 {
-        color: #ffffff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    .hero-content {
+        width: 100%;
+        z-index: 1;
     }
     
-    .display-6 {
+    .min-vh-70 {
+        min-height: 70vh;
+    }
+    
+    .hero-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        color: white;
+        transition: transform 0.5s ease;
+    }
+    
+    .hero-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    [data-bs-theme="dark"] .hero-card {
+        background: rgba(33, 37, 41, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .hero-icon-container {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        margin-bottom: 1.5rem;
+        animation: pulse 2s infinite;
+        transition: transform 0.3s ease;
+    }
+    
+    .hero-card:hover .hero-icon-container {
+        transform: scale(1.1);
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+        70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+    
+    .hero-icon {
+        color: white;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.5px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        opacity: 0.9;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .scroll-indicator {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        opacity: 0.7;
+    }
+    
+    /* Features Section Styles */
+    .features-section {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.8) 100%);
+        position: relative;
+        z-index: 1;
+    }
+    
+    [data-bs-theme="dark"] .features-section {
+        background: linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.8) 100%);
+    }
+    
+    .section-header {
+        margin-bottom: 3rem;
+    }
+    
+    .section-title {
         font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
     }
     
-    .btn {
+    .section-divider {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        margin: 0 auto 1rem;
+        border-radius: 2px;
+    }
+    
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    [data-bs-theme="dark"] .section-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        box-shadow: var(--elevation-2);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    [data-bs-theme="dark"] .feature-card {
+        background: rgba(33, 37, 41, 0.8);
+        box-shadow: var(--elevation-3);
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transform: translateX(-100%);
+        transition: transform 0.5s ease;
+    }
+    
+    .feature-card:hover::before {
+        transform: translateX(0);
+    }
+    
+    .feature-icon {
+        margin-bottom: 1.5rem;
+    }
+    
+    .icon-bg {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(76, 175, 80, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
         transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .icon-bg {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    [data-bs-theme="dark"] .feature-title {
+        color: white;
+    }
+    
+    .feature-text {
+        color: #666;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    [data-bs-theme="dark"] .feature-text {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .feature-link {
+        font-weight: 500;
+        color: var(--primary-color);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-link:hover {
+        gap: 0.8rem;
+    }
+    
+    .feature-link svg {
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-link:hover svg {
+        transform: translateX(3px);
+    }
+    
+    /* Stats Section Styles */
+    .stats-section {
+        background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+    }
+    
+    [data-bs-theme="dark"] .stats-section {
+        background: linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(33, 37, 41, 0.8) 100%);
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: var(--elevation-2);
+    }
+    
+    [data-bs-theme="dark"] .stats-card {
+        background: rgba(33, 37, 41, 0.8);
+        box-shadow: var(--elevation-3);
+    }
+    
+    .stats-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    [data-bs-theme="dark"] .stats-title {
+        color: white;
+    }
+    
+    .stats-subtitle {
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    
+    [data-bs-theme="dark"] .stats-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: rgba(76, 175, 80, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    [data-bs-theme="dark"] .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .stat-item:hover {
+        background: rgba(76, 175, 80, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    [data-bs-theme="dark"] .stat-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(76, 175, 80, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    [data-bs-theme="dark"] .stat-label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .stat-sublabel {
+        font-size: 0.9rem;
+        color: #888;
+    }
+    
+    [data-bs-theme="dark"] .stat-sublabel {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .time-ago {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    /* Testimonials Section Styles */
+    .testimonials-section {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.8) 100%);
+    }
+    
+    [data-bs-theme="dark"] .testimonials-section {
+        background: linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.8) 100%);
+    }
+    
+    .testimonial-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        box-shadow: var(--elevation-2);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    [data-bs-theme="dark"] .testimonial-card {
+        background: rgba(33, 37, 41, 0.8);
+        box-shadow: var(--elevation-3);
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--elevation-4);
+    }
+    
+    .testimonial-content {
+        flex-grow: 1;
+        position: relative;
+        padding-left: 2.5rem;
+    }
+    
+    .testimonial-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(76, 175, 80, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .testimonial-text {
+        font-style: italic;
+        color: #555;
+        margin-bottom: 1.5rem;
+    }
+    
+    [data-bs-theme="dark"] .testimonial-text {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .author-info {
+        flex-grow: 1;
+    }
+    
+    .author-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        color: #333;
+    }
+    
+    [data-bs-theme="dark"] .author-name {
+        color: white;
+    }
+    
+    .author-title {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0;
+    }
+    
+    [data-bs-theme="dark"] .author-title {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* CTA Section Styles */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        position: relative;
+    }
+    
+    .cta-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--elevation-4);
+    }
+    
+    .cta-content {
+        padding: 3rem;
+    }
+    
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .cta-text {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .cta-image {
+        height: 100%;
+        min-height: 300px;
+        background: rgba(76, 175, 80, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Button Styles */
+    .btn {
         border-radius: 10px;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    .btn-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    .shadow-lg {
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    .ripple {
+        position: relative;
+        overflow: hidden;
     }
     
+    .ripple:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .ripple:active:before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+        box-shadow: var(--elevation-2);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--elevation-4);
+        color: white;
+    }
+    
+    .btn-outline-light {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+    }
+    
+    .btn-outline-light:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: translateY(-3px);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    /* Hover Animation Classes */
+    .hover-effect {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .hover-effect::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+        z-index: -1;
+    }
+    
+    .hover-effect:hover::before {
+        transform: translateX(0);
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .hover-rotate {
+        transition: transform 0.5s ease;
+    }
+    
+    .hover-rotate:hover {
+        transform: rotate(15deg);
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: scale(1.2);
+    }
+    
+    .hover-pulse {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-pulse:hover {
+        animation: pulse 1.5s infinite;
+    }
+    
+    .hover-bounce {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-bounce:hover {
+        animation: bounce 1s infinite;
+    }
+    
+    .hover-grow {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-grow:hover {
+        transform: scale(1.1);
+    }
+    
+    .hover-tilt {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-tilt:hover {
+        transform: perspective(1000px) rotateY(10deg) rotateX(10deg);
+    }
+    
+    .hover-link {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .hover-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+    
+    .hover-link:hover::after {
+        width: 100%;
+    }
+    
+    /* Keyframe Animations */
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    /* Responsive Styles */
     @media (max-width: 768px) {
-        .hero-overlay {
-            width: 95% !important;
-            padding: 2rem !important;
-        }
-        
-        .display-4 {
+        .hero-title {
             font-size: 2rem;
         }
         
-        .card:hover {
-            transform: translateY(-4px) scale(1.01);
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .hero-card {
+            padding: 2rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .feature-card {
+            padding: 1.5rem;
+        }
+        
+        .stats-card {
+            padding: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+        
+        .cta-content {
+            padding: 2rem;
+        }
+        
+        .cta-title {
+            font-size: 1.5rem;
+        }
+        
+        .cta-image {
+            min-height: 200px;
         }
     }
 </style>
+
+<script>
+    // Counter animation for stats
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.stat-number');
+        const speed = 200;
+        
+        const countUp = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+                
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(countUp, 10);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        };
+        
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add scroll animation class
+                    entry.target.classList.add('scroll-visible');
+                    
+                    // Add staggered animation delay based on data-delay attribute
+                    const delay = entry.target.getAttribute('data-delay') || 0;
+                    entry.target.style.transitionDelay = `${delay}ms`;
+                    
+                    // Start counter animation when stats section is visible
+                    if (entry.target.classList.contains('stats-card')) {
+                        countUp();
+                    }
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all elements with scroll-animate class
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Parallax effect for hero background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.parallax-bg');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+        
+        // Enhanced hover effects for interactive elements
+        const interactiveElements = document.querySelectorAll('.hover-lift, .hover-rotate, .hover-scale, .hover-pulse, .hover-bounce, .hover-grow, .hover-tilt');
+        
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                this.style.transform = this.style.transform + ' scale(1.02)';
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                this.style.transform = this.style.transform.replace(' scale(1.02)', '');
+            });
+        });
+        
+        // Smooth scroll animation for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

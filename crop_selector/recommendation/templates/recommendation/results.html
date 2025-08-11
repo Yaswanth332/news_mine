@@ -1,3 +1,4 @@
+<!-- # results.html -->
 {% extends 'recommendation/base.html' %}
 
 {% block title %}Recommended Crops{% endblock %}
@@ -107,7 +108,7 @@
                 <div class="card-body py-5">
                     <h4>😔 No Perfect Matches Found</h4>
                     <p class="text-muted">Try adjusting your criteria for better results.</p>
-                    <a href="{% url 'recommend' %}" class="btn btn-success">
+                    <a href="{% url 'recommend_crop' %}" class="btn btn-success">
                         🔄 Try Different Conditions
                     </a>
                 </div>
@@ -118,7 +119,7 @@
 
     <div class="text-center mt-5">
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="{% url 'recommend' %}" class="btn btn-success">
+            <a href="{% url 'recommend_crop' %}" class="btn btn-success">
                 🔄 New Recommendation
             </a>
             <a href="{% url 'past_recommendations' %}" class="btn btn-info">

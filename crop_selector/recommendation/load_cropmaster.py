@@ -8,7 +8,16 @@ import csv
 def run():
     CropMaster.objects.all().delete()
 
-    with open('recommendation/data/crop_data.csv', newline='', encoding='utf-8') as csvfile:
+    # Prefer enriched dataset if present
+    csv_path_candidates = [
+        'recommendation/data/updated_crop_master_100.csv',
+        'recommendation/data/crop_data.csv',
+    ]
+    csv_path = next((p for p in csv_path_candidates if os.path.exists(p)), None)
+    if not csv_path:
+        raise FileNotFoundError('No crop CSV file found in recommendation/data')
+
+    with open(csv_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             crop_name = row['name'].strip().lower().replace(" ", "_")

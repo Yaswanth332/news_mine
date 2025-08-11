@@ -1,193 +1,754 @@
+<!-- crop_detail.html -->
 {% extends 'recommendation/base.html' %}
-{% block title %}{{ crop.name }} Details | Crop Selector{% endblock %}
+{% load static %}
 
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-lg border-0 animate__animated animate__fadeIn">
-                <div class="row g-0">
-                    <div class="col-md-5">
-                        {% if crop.image %}
-                            <img src="{{ crop.image.url }}" alt="{{ crop.name }}" class="img-fluid rounded-start" style="height: 100%; object-fit: cover; min-height: 400px;">
-                        {% else %}
-                            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=500&h=400&q=80" alt="Generic Crop Image" class="img-fluid rounded-start" style="height: 100%; object-fit: cover; min-height: 400px;">
-                        {% endif %}
-                    </div>
-                    <div class="col-md-7">
-                        <div class="card-body p-4">
-                            <h2 class="card-title text-success mb-3">🌾 {{ crop.name }}</h2>
-                            <p class="card-text lead">{{ crop.description }}</p>
+{% block title %}{{ crop.name }} Details | AgroGuide{% endblock %}
 
-                            <h5 class="mt-4 mb-3">📌 Crop Requirements</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <ul class="list-group list-group-flush mb-3">
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>🌱 Soil Texture:</strong> 
-                                            <span class="badge bg-secondary ms-2">{{ crop.soil_texture|capfirst }}</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>⚖️ Soil pH Range:</strong> 
-                                            <span class="text-info">{{ crop.soil_ph_min }} – {{ crop.soil_ph_max }}</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>🍃 Organic Matter:</strong> 
-                                            <span class="badge bg-success ms-2">{{ crop.organic_matter|capfirst }}</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>💧 Drainage:</strong> 
-                                            <span class="badge bg-info ms-2">{{ crop.drainage_status|capfirst }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <ul class="list-group list-group-flush mb-3">
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>🌧️ Rainfall Range:</strong> 
-                                            <span class="text-primary">{{ crop.rainfall_min }} – {{ crop.rainfall_max }} mm</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>🌡️ Temperature Range:</strong> 
-                                            <span class="text-warning">{{ crop.temperature_min }} – {{ crop.temperature_max }} °C</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>📅 Best Season:</strong> 
-                                            <span class="badge bg-warning text-dark ms-2">{{ crop.season|capfirst }}</span>
-                                        </li>
-                                        <li class="list-group-item border-0 px-0">
-                                            <strong>🔄 Previous Crop:</strong> 
-                                            <span class="badge bg-outline-secondary ms-2">
-                                                {% if crop.previous_crop %}
-                                                    {{ crop.previous_crop|capfirst }}
-                                                {% else %}
-                                                    Any
-                                                {% endif %}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2 mt-4 flex-wrap">
-                                <a href="javascript:history.back()" class="btn btn-secondary">
-                                    ⬅️ Go Back
-                                </a>
-                                <a href="{% url 'recommend' %}" class="btn btn-success">
-                                    🌱 New Recommendation
-                                </a>
-                                {% if user.is_authenticated %}
-                                    <a href="{% url 'past_recommendations' %}" class="btn btn-outline-info">
-                                        📋 My History
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Additional Info Section -->
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-10">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">💡 Growing Tips for {{ crop.name }}</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h6>🌱 Soil Preparation</h6>
-                            <p class="small text-muted">
-                                Ensure your soil matches the {{ crop.soil_texture }} texture requirement with 
-                                pH between {{ crop.soil_ph_min }}-{{ crop.soil_ph_max }} for optimal growth.
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <h6>🌦️ Climate Needs</h6>
-                            <p class="small text-muted">
-                                This crop thrives in {{ crop.temperature_min }}-{{ crop.temperature_max }}°C temperature 
-                                with {{ crop.rainfall_min }}-{{ crop.rainfall_max }}mm annual rainfall.
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <h6>📅 Best Timing</h6>
-                            <p class="small text-muted">
-                                Plant during {{ crop.season }} season for best results. 
-                                {% if crop.previous_crop %}
-                                    Works well after {{ crop.previous_crop }} crops.
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_head %}
 <style>
-    .card {
-        transition: transform 0.3s ease;
-        border-radius: 15px;
+    /* Font Imports */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+    
+    :root {
+        --primary-green: #3fae5f;
+        --secondary-green: #7bc67b;
+        --dark-green: #235d34;
+        --light-green: #eef8f0;
+        --earth-brown: #8d6e63;
+        --golden-yellow: #f2b705;
+        --cream-white: #f7fafc;
+        --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
     
-    .card:hover {
-        transform: scale(1.02);
+    body {
+        font-family: 'Poppins', 'Plus Jakarta Sans', 'Inter', sans-serif;
+        background-color: var(--cream-white);
+        color: #1f2937;
+        overflow-x: hidden;
     }
     
-    .list-group-item {
-        background-color: transparent;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(0,0,0,0.1);
+    /* Hero Section */
+    .crop-hero {
+        position: relative;
+        height: 70vh;
+        min-height: 500px;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
     }
     
-    [data-bs-theme="dark"] .list-group-item {
-        border-bottom-color: rgba(255,255,255,0.1);
+    .hero-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        transform: scale(1.1);
+        transition: transform 8s ease-out;
     }
     
-    [data-bs-theme="dark"] .card-header {
-        background-color: rgba(33, 37, 41, 0.75) !important;
-        border-bottom-color: rgba(255,255,255,0.20);
+    .crop-hero:hover .hero-image {
+        transform: scale(1);
     }
     
-    [data-bs-theme="dark"] .text-muted {
-        color: rgba(255, 255, 255, 0.8) !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    [data-bs-theme="dark"] .card-title,
-    [data-bs-theme="dark"] .card-text,
-    [data-bs-theme="dark"] h1,
-    [data-bs-theme="dark"] h2,
-    [data-bs-theme="dark"] h3,
-    [data-bs-theme="dark"] h4,
-    [data-bs-theme="dark"] h5,
-    [data-bs-theme="dark"] h6 {
-        color: #ffffff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    .hero-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 4rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        color: white;
     }
     
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.6rem;
+    .crop-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease 0.3s forwards;
+    }
+    
+    .crop-subtitle {
+        font-size: 1.5rem;
+        max-width: 800px;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease 0.5s forwards;
+    }
+    
+    /* Main Content Layout */
+    .crop-detail-container {
+        display: flex;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+    }
+    
+    .main-content {
+        flex: 1;
+        padding-right: 2rem;
+    }
+    
+    .sidebar {
+        width: 320px;
+        position: sticky;
+        top: 2rem;
+        align-self: flex-start;
+    }
+    
+    /* Info Cards */
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem 1.5rem 1.25rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.35rem;
+        color: var(--primary-green);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .card-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--golden-yellow);
+    }
+    
+    /* Tabs Navigation */
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 2rem;
+    }
+    
+    .tab {
+        padding: 1rem 2rem;
+        cursor: pointer;
+        font-weight: 500;
+        color: #666;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .tab:hover {
+        color: var(--primary-green);
+    }
+    
+    .tab.active {
+        color: var(--primary-green);
+        font-weight: 600;
+    }
+    
+    .tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--primary-green);
+    }
+    
+    /* Nutrient Icons */
+    .nutrient-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .nutrient-item {
+        text-align: center;
+        padding: 1rem 0.75rem;
+        background: var(--light-green);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .nutrient-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .nutrient-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-green);
+    }
+    
+    /* Growth Progress */
+    .growth-stage {
+        margin-bottom: 2rem;
+    }
+    
+    .stage-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stage-name {
+        font-weight: 500;
+    }
+    
+    .stage-duration {
+        color: #666;
+    }
+    
+    .progress-container {
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(to right, var(--primary-green), var(--secondary-green));
+        border-radius: 4px;
+        transition: width 1s ease;
+    }
+    
+    /* Quick Facts Sidebar */
+    .quick-facts {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+    
+    .fact-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .fact-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--light-green);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: var(--primary-green);
+        font-size: 1.2rem;
+    }
+    
+    /* CTA Button */
+    .cta-button {
+        display: inline-block;
+        background: var(--primary-green);
+        color: white;
+        padding: 0.85rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(74, 159, 90, 0.3);
+        width: 100%;
+    }
+    
+    .cta-button:hover {
+        background: var(--dark-green);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(74, 159, 90, 0.4);
+    }
+    
+    /* Parallax Section */
+    .parallax-section {
+        height: 400px;
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+        margin: 4rem 0;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 1200px) {
+        .crop-detail-container {
+            flex-direction: column;
+        }
+        
+        .main-content {
+            padding-right: 0;
+            margin-bottom: 3rem;
+        }
+        
+        .sidebar {
+            width: 100%;
+            position: static;
+        }
     }
     
     @media (max-width: 768px) {
-        .card-body {
-            padding: 2rem 1rem;
+        .crop-title {
+            font-size: 2.5rem;
         }
         
-        .d-flex.gap-2 {
-            gap: 0.5rem !important;
+        .crop-subtitle {
+            font-size: 1.2rem;
         }
         
-        .btn {
-            font-size: 0.875rem;
+        .hero-content {
+            padding: 2rem;
+        }
+        
+        .tabs {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
         }
     }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Micro-interactions */
+    .hover-grow {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-grow:hover {
+        transform: scale(1.03);
+    }
+    
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ripple:after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+        background-repeat: no-repeat;
+        background-position: 50%;
+        transform: scale(10, 10);
+        opacity: 0;
+        transition: transform .5s, opacity 1s;
+    }
+    
+    .ripple:active:after {
+        transform: scale(0, 0);
+        opacity: .3;
+        transition: 0s;
+    }
 </style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="crop-hero">
+    {% if crop.image %}
+        <img src="{{ crop.image.url }}" alt="{{ crop.name }}" class="hero-image">
+    {% else %}
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Farm Field" class="hero-image">
+    {% endif %}
+    
+    <div class="hero-content">
+        <h1 class="crop-title">{{ crop.name }}</h1>
+        <p class="crop-subtitle">{{ crop.description }}</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="crop-detail-container">
+    <div class="main-content">
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <div class="tab active" data-tab="overview">Overview</div>
+            <div class="tab" data-tab="requirements">Growing Requirements</div>
+            <div class="tab" data-tab="stages">Growth Stages</div>
+            <div class="tab" data-tab="nutrition">Nutritional Value</div>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div class="tab-content" id="overview">
+            <div class="info-card hover-grow">
+                <h3 class="card-title">About {{ crop.name }}</h3>
+                <p>{{ crop.description }}</p>
+                <p>This crop is typically grown during the {{ crop.season }} season and thrives in {{ crop.soil_texture }} soil conditions. It's known for its adaptability to various climates and relatively easy cultivation process.</p>
+            </div>
+            
+            <div class="info-card hover-grow">
+                <h3 class="card-title">Key Benefits</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-heart text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Nutritional Value</h4>
+                            <p class="text-gray-600">Rich in vitamins and minerals essential for human health</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-leaf text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Soil Health</h4>
+                            <p class="text-gray-600">Improves soil fertility and structure</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-dollar-sign text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Economic Value</h4>
+                            <p class="text-gray-600">High market demand and profitability</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-tint text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Water Efficiency</h4>
+                            <p class="text-gray-600">Moderate water requirements with good drought tolerance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Requirements Tab -->
+        <div class="tab-content" id="requirements" style="display: none;">
+            <div class="info-card hover-grow">
+                <h3 class="card-title">Soil Requirements</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-2">Soil Type</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-yellow-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-mountain text-yellow-600"></i>
+                            </div>
+                            <span>{{ crop.soil_texture|capfirst }} Soil</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">pH Range</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-flask text-blue-600"></i>
+                            </div>
+                            <span>{{ crop.soil_ph_min }} - {{ crop.soil_ph_max }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Organic Matter</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-green-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-recycle text-green-600"></i>
+                            </div>
+                            <span>{{ crop.organic_matter|capfirst }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Drainage</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-teal-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-water text-teal-600"></i>
+                            </div>
+                            <span>{{ crop.drainage_status|capfirst }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card hover-grow">
+                <h3 class="card-title">Climate Conditions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-2">Temperature Range</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-red-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-thermometer-half text-red-600"></i>
+                            </div>
+                            <span>{{ crop.temperature_min }}°C - {{ crop.temperature_max }}°C</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Rainfall Needs</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-cloud-rain text-blue-600"></i>
+                            </div>
+                            <span>{{ crop.rainfall_min }}mm - {{ crop.rainfall_max }}mm annually</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Growing Season</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-yellow-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-sun text-yellow-600"></i>
+                            </div>
+                            <span>{{ crop.season|capfirst }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Previous Crop</h4>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-purple-200 rounded-full mr-3 flex items-center justify-center">
+                                <i class="fas fa-history text-purple-600"></i>
+                            </div>
+                            <span>{% if crop.previous_crop %}{{ crop.previous_crop|capfirst }}{% else %}Any{% endif %}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Growth Stages Tab -->
+        <div class="tab-content" id="stages" style="display: none;">
+            <div class="info-card hover-grow">
+                <h3 class="card-title">Growth Timeline</h3>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Germination</span>
+                        <span class="stage-duration">7-14 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 15%"></div>
+                    </div>
+                </div>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Seedling</span>
+                        <span class="stage-duration">14-21 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 25%"></div>
+                    </div>
+                </div>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Vegetative</span>
+                        <span class="stage-duration">30-45 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 40%"></div>
+                    </div>
+                </div>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Flowering</span>
+                        <span class="stage-duration">14-21 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 15%"></div>
+                    </div>
+                </div>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Fruiting</span>
+                        <span class="stage-duration">21-30 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 30%"></div>
+                    </div>
+                </div>
+                
+                <div class="growth-stage">
+                    <div class="stage-header">
+                        <span class="stage-name">Harvest</span>
+                        <span class="stage-duration">7-14 days</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nutritional Value Tab -->
+        <div class="tab-content" id="nutrition" style="display: none;">
+            <div class="info-card hover-grow">
+                <h3 class="card-title">Nutritional Profile</h3>
+                <p>Per 100g serving of {{ crop.name }} provides:</p>
+                
+                <div class="nutrient-grid">
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🔥</div>
+                        <h4>Calories</h4>
+                        <p>85 kcal</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">💪</div>
+                        <h4>Protein</h4>
+                        <p>2.5g</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🍞</div>
+                        <h4>Carbs</h4>
+                        <p>20g</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🥑</div>
+                        <h4>Fiber</h4>
+                        <p>3.5g</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">💊</div>
+                        <h4>Vitamin C</h4>
+                        <p>25% DV</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🦴</div>
+                        <h4>Calcium</h4>
+                        <p>3% DV</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🩸</div>
+                        <h4>Iron</h4>
+                        <p>6% DV</p>
+                    </div>
+                    <div class="nutrient-item">
+                        <div class="nutrient-icon">🥕</div>
+                        <h4>Vitamin A</h4>
+                        <p>15% DV</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Parallax Section -->
+        <div class="parallax-section" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="text-center text-white p-6 max-w-2xl">
+                    <h3 class="text-3xl font-serif mb-4">Sustainable Farming Practices</h3>
+                    <p class="text-lg">Discover how {{ crop.name }} can be part of your sustainable agriculture strategy with our comprehensive growing guides.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="quick-facts hover-grow">
+            <h3 class="card-title">Quick Facts</h3>
+            <p class="mb-0 text-muted">Detailed quick facts will appear here when available.</p>
+        </div>
+        
+        <a href="{% url 'recommend_crop' %}" class="cta-button ripple hover-grow">
+            <i class="fas fa-seedling mr-2"></i> Get Personalized Recommendations
+        </a>
+    </div>
+</div>
+
+<script>
+    // Tab functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show the selected tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).style.display = 'block';
+            });
+        });
+        
+        // Show the first tab by default
+        if (tabContents.length > 0) {
+            tabContents[0].style.display = 'block';
+        }
+        
+        // Parallax effect
+        window.addEventListener('scroll', function() {
+            const parallax = document.querySelector('.parallax-section');
+            if (parallax) {
+                const scrollPosition = window.pageYOffset;
+                parallax.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
+            }
+        });
+        
+        // Animate progress bars when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBars = entry.target.querySelectorAll('.progress-bar');
+                    progressBars.forEach(bar => {
+                        bar.style.transition = 'width 1.5s ease-out';
+                        // Trigger reflow to restart animation
+                        void bar.offsetWidth;
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        const stagesSection = document.getElementById('stages');
+        if (stagesSection) {
+            observer.observe(stagesSection);
+        }
+    });
+</script>
 {% endblock %}

@@ -1,718 +1,546 @@
+{% load static %}
 {% extends 'recommendation/base.html' %}
 {% block title %}Get Crop Recommendations | Crop Selector{% endblock %}
+
 {% block extra_head %}
 <style>
-    /* Crop recommendation form specific styles */
-    .recommendation-container {
-        padding: 2rem 0;
+    /* New styles for multi-step form and enhanced aesthetics */
+    :root {
+        --form-step-indicator-bg: #e9ecef;
+        --form-step-indicator-active-bg: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+        --form-step-indicator-text: #6c757d;
+        --form-step-indicator-active-text: #fff;
+        --form-card-bg: rgba(255, 255, 255, 0.98);
+        --form-card-border: rgba(0, 0, 0, 0.1);
+        --form-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --form-input-bg: rgba(248, 249, 250, 0.8);
+        --form-input-border: rgba(0, 0, 0, 0.15);
+        --form-input-focus-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
     }
-    
-    .recommendation-card {
-        background: linear-gradient(
-            135deg, 
-            rgba(255, 255, 255, 0.7) 0%, 
-            rgba(248, 249, 250, 0.65) 100%
-        );
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(0, 0, 0, 0.08);
+
+    [data-bs-theme="dark"] {
+        --form-step-indicator-bg: #495057;
+        --form-step-indicator-active-bg: linear-gradient(135deg, #388E3C 0%, #689F38 100%);
+        --form-step-indicator-text: #dee2e6;
+        --form-step-indicator-active-text: #fff;
+        --form-card-bg: rgba(33, 37, 41, 0.95);
+        --form-card-border: rgba(255, 255, 255, 0.1);
+        --form-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        --form-input-bg: rgba(52, 58, 64, 0.7);
+        --form-input-border: rgba(255, 255, 255, 0.15);
+        --form-input-focus-shadow: 0 0 0 0.25rem rgba(139, 195, 74, 0.35);
+    }
+
+    .recommendation-form-section {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        padding: 4rem 0;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.8) 100%);
+        background-size: cover;
+        background-position: center;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    [data-bs-theme="dark"] .recommendation-form-section {
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%);
+        background-size: cover;
+        background-position: center;
+    }
+
+    .form-container-custom {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--form-card-bg);
         border-radius: 20px;
+        box-shadow: var(--form-card-shadow);
+        border: 1px solid var(--form-card-border);
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.4s ease;
-        opacity: 0;
-        transform: translateY(50px);
+        animation: fadeInUp 0.8s ease-out;
     }
-    
-    .recommendation-card.animate-in {
-        animation: slideInUp 0.8s ease forwards;
-    }
-    
-    [data-bs-theme="dark"] .recommendation-card {
-        background: linear-gradient(
-            135deg, 
-            rgba(33, 37, 41, 0.75) 0%, 
-            rgba(52, 58, 64, 0.70) 100%
-        );
-        border-color: rgba(255, 255, 255, 0.20);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-    
-    .recommendation-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-    
-    [data-bs-theme="dark"] .recommendation-card:hover {
-        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.3);
-    }
-    
-    .card-header {
-        background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
-        color: white;
-        border: none;
-        padding: 1.5rem;
+
+    .form-header-custom {
+        background: var(--form-step-indicator-active-bg); /* Use the same gradient as active step */
+        color: var(--form-step-indicator-active-text);
+        padding: 2rem 1.5rem;
+        text-align: center;
         position: relative;
-        overflow: hidden;
     }
-    
-    .card-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
-        animation: pulse 15s infinite alternate;
-    }
-    
-    @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.5; }
-        100% { transform: scale(1.1); opacity: 0.8; }
-    }
-    
-    .card-header h3 {
+
+    .form-header-custom h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
         margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 1;
-        opacity: 0;
-        transform: translateY(-20px);
+        font-size: 2.2rem;
     }
-    
-    .card-header.animate-in h3 {
-        animation: fadeInDown 0.8s ease 0.2s forwards;
+
+    .form-header-custom p {
+        font-size: 1.1rem;
+        opacity: 0.9;
     }
-    
-    .card-header p {
-        margin-bottom: 0;
-        position: relative;
-        z-index: 1;
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    
-    .card-header.animate-in p {
-        animation: fadeInUp 0.8s ease 0.4s forwards;
-    }
-    
-    .section-header {
-        margin-bottom: 1.5rem;
-        position: relative;
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    
-    .section-header.animate-in {
-        animation: slideInLeft 0.8s ease forwards;
-    }
-    
-    .section-header h5 {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+
+    .form-steps {
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        padding: 1.5rem 1rem;
+        background: var(--form-step-indicator-bg);
+        border-bottom: 1px solid var(--form-card-border);
     }
-    
-    .section-header hr {
-        height: 2px;
-        opacity: 0.6;
-        border: none;
-        background: linear-gradient(90deg, currentColor, transparent);
-        width: 0;
-    }
-    
-    .section-header.animate-in hr {
-        animation: expandWidth 1s ease 0.3s forwards;
-    }
-    
-    .form-row {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    
-    .form-row.animate-in {
-        animation: slideInUp 0.8s ease forwards;
-    }
-    
-    .form-label {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    
-    .form-row.animate-in .form-label {
-        animation: slideInLeft 0.6s ease 0.2s forwards;
-    }
-    
-    .form-control, .form-select {
-        border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
+
+    .form-step-item {
+        flex: 1;
+        text-align: center;
+        cursor: pointer;
         padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.7);
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    
-    .form-row.animate-in .form-control,
-    .form-row.animate-in .form-select {
-        animation: scaleIn 0.6s ease 0.4s forwards;
-    }
-    
-    [data-bs-theme="dark"] .form-control, 
-    [data-bs-theme="dark"] .form-select {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
-    }
-    
-    [data-bs-theme="dark"] .form-control::placeholder,
-    [data-bs-theme="dark"] .form-select option {
-        color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.2);
-        transform: scale(1.02);
-        background: rgba(255, 255, 255, 0.9);
-    }
-    
-    [data-bs-theme="dark"] .form-control:focus, 
-    [data-bs-theme="dark"] .form-select:focus {
-        background: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.3);
-    }
-    
-    .input-group {
         border-radius: 10px;
-        overflow: hidden;
         transition: all 0.3s ease;
-        opacity: 0;
-        transform: scale(0.9);
+        position: relative;
+        color: var(--form-step-indicator-text);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin: 0 0.5rem;
+    }
+
+    .form-step-item.active {
+        background: var(--form-step-indicator-active-bg);
+        color: var(--form-step-indicator-active-text);
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .form-step-item:hover:not(.active) {
+        background: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
     }
     
-    .form-row.animate-in .input-group {
-        animation: scaleIn 0.6s ease 0.4s forwards;
+    .form-step-item .step-icon {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
     }
-    
-    .input-group:focus-within {
-        transform: scale(1.02);
-        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.2);
+
+    .form-body-custom {
+        padding: 2rem;
+        position: relative;
+        overflow: hidden; /* For slide animation */
     }
-    
-    .input-group-text {
+
+    .form-step-content {
+        display: none;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .form-step-content.active {
+        display: block;
+    }
+
+    .form-group-custom {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 1.05rem;
+    }
+
+    .form-control-custom, .form-select-custom {
+        border-radius: 10px;
+        border: 1px solid var(--form-input-border);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background: var(--form-input-bg);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+
+    .form-control-custom:focus, .form-select-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: var(--form-input-focus-shadow);
+        background: var(--form-card-bg); /* A bit brighter on focus */
+        transform: translateY(-1px);
+    }
+
+    [data-bs-theme="dark"] .form-control-custom:focus, [data-bs-theme="dark"] .form-select-custom:focus {
+        background: var(--form-input-bg);
+    }
+
+    .input-group-text-custom {
         background: rgba(76, 175, 80, 0.1);
-        border: 1px solid rgba(76, 175, 80, 0.2);
-        color: #4CAF50;
+        border: 1px solid var(--form-input-border);
+        color: var(--primary-color);
         border-radius: 10px 0 0 10px;
     }
-    
-    [data-bs-theme="dark"] .input-group-text {
-        background: rgba(76, 175, 80, 0.2);
-        border-color: rgba(76, 175, 80, 0.3);
-        color: #8BC34A;
+    [data-bs-theme="dark"] .input-group-text-custom {
+        background: rgba(139, 195, 74, 0.15);
     }
-    
-    .form-text {
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    
-    .form-row.animate-in .form-text {
-        animation: fadeIn 0.6s ease 0.6s forwards;
-    }
-    
-    .button-container {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    
-    .button-container.animate-in {
-        animation: slideInUp 0.8s ease 0.8s forwards;
-    }
-    
-    .btn-submit {
-        background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+
+    .btn-custom {
+        background: var(--primary-gradient);
         border: none;
         border-radius: 50px;
         font-weight: 600;
-        padding: 0.75rem 2rem;
-        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        color: white;
         transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        opacity: 0;
-        transform: scale(0.9);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
     }
-    
-    .button-container.animate-in .btn-submit {
-        animation: scaleIn 0.6s ease 0.2s forwards;
-    }
-    
-    .btn-submit::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateX(-100%);
-        transition: transform 0.6s;
-    }
-    
-    .btn-submit:hover::before {
-        transform: translateX(0);
-    }
-    
-    .btn-submit:hover {
+
+    .btn-custom:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        box-shadow: 0 10px 25px rgba(76, 175, 80, 0.45);
+        color: white;
     }
-    
-    .btn-outline {
+
+    .btn-outline-custom {
         border-radius: 50px;
         font-weight: 600;
-        padding: 0.75rem 2rem;
-        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
         transition: all 0.3s ease;
-        border: 2px solid rgba(76, 175, 80, 0.5);
-        color: #4CAF50;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
         background: transparent;
-        opacity: 0;
-        transform: scale(0.9);
     }
-    
-    .button-container.animate-in .btn-outline {
-        animation: scaleIn 0.6s ease 0.4s forwards;
-    }
-    
-    .btn-outline:hover {
+
+    .btn-outline-custom:hover {
         transform: translateY(-3px);
         background: rgba(76, 175, 80, 0.1);
-        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+        color: var(--primary-color);
     }
-    
-    .help-card {
-        background: linear-gradient(
-            135deg, 
-            rgba(255, 255, 255, 0.7) 0%, 
-            rgba(248, 249, 250, 0.65) 100%
-        );
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.4s ease;
-        opacity: 0;
-        transform: translateY(50px);
+
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
     }
-    
-    .help-card.animate-in {
-        animation: slideInUp 0.8s ease 0.2s forwards;
-    }
-    
-    [data-bs-theme="dark"] .help-card {
-        background: linear-gradient(
-            135deg, 
-            rgba(33, 37, 41, 0.75) 0%, 
-            rgba(52, 58, 64, 0.70) 100%
-        );
-        border-color: rgba(255, 255, 255, 0.20);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-    
-    .help-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-    
-    [data-bs-theme="dark"] .help-card:hover {
-        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.3);
-    }
-    
-    .help-item {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    
-    .help-card.animate-in .help-item:nth-child(1) {
-        animation: slideInUp 0.6s ease 0.4s forwards;
-    }
-    
-    .help-card.animate-in .help-item:nth-child(2) {
-        animation: slideInUp 0.6s ease 0.6s forwards;
-    }
-    
-    .help-card.animate-in .help-item:nth-child(3) {
-        animation: slideInUp 0.6s ease 0.8s forwards;
-    }
-    
-    .help-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        transition: all 0.3s ease;
-        display: inline-block;
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    
-    .help-item.animate-in .help-icon {
-        animation: scaleIn 0.6s ease 0.2s forwards;
-    }
-    
-    .help-card:hover .help-icon {
-        transform: scale(1.1) rotate(5deg);
-    }
-    
-    .help-title {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #333;
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    
-    .help-item.animate-in .help-title {
-        animation: slideInLeft 0.6s ease 0.4s forwards;
-    }
-    
-    [data-bs-theme="dark"] .help-title {
-        color: #fff;
-    }
-    
-    .help-text {
-        font-size: 0.9rem;
-        color: #555;
-        line-height: 1.5;
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    
-    .help-item.animate-in .help-text {
-        animation: fadeInUp 0.6s ease 0.6s forwards;
-    }
-    
-    [data-bs-theme="dark"] .help-text {
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    .alert {
-        border-radius: 10px;
-        border: none;
-        animation: slideInRight 0.5s ease;
-    }
-    
-    @keyframes slideInRight {
-        from { 
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        to { 
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes slideInLeft {
-        from { 
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to { 
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes slideInUp {
-        from { 
-            opacity: 0;
-            transform: translateY(50px);
-        }
-        to { 
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
+
+    /* Animations */
     @keyframes fadeInUp {
-        from { 
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to { 
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    
-    @keyframes fadeInDown {
-        from { 
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to { 
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
     }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    @keyframes slideOutLeft {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(-50px); }
     }
-    
-    @keyframes scaleIn {
-        from { 
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        to { 
-            opacity: 1;
-            transform: scale(1);
-        }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
     }
-    
-    @keyframes expandWidth {
-        from { width: 0; }
-        to { width: 100%; }
+    @keyframes slideOutRight {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(50px); }
     }
-    
+
+    /* Specific animations for form steps */
+    .slide-enter-active { animation: slideInRight 0.6s ease-out forwards; }
+    .slide-leave-active { animation: slideOutLeft 0.6s ease-out forwards; position: absolute; width: 100%; top: 0; left: 0;} /* Important for smooth overlap */
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-        .recommendation-card {
-            margin: 0 1rem;
+        .form-steps {
+            flex-direction: column;
+            align-items: center;
         }
-        
-        .card-body {
+        .form-step-item {
+            width: 90%;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .form-body-custom {
             padding: 1.5rem;
-        }
-        
-        .btn-submit, .btn-outline {
-            font-size: 1rem;
-            padding: 0.6rem 1.5rem;
         }
     }
 </style>
 {% endblock %}
+
 {% block content %}
-<div class="recommendation-container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="recommendation-card">
-                <div class="card-header text-center">
-                    <h3>🌿 Get Smart Crop Recommendations</h3>
-                    <p>Fill in your field and climate details to get personalized crop suggestions</p>
+<section class="recommendation-form-section" style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.8) 100%), url('{{ background_image_url }}');">
+    <div class="container">
+        <div class="form-container-custom">
+            <div class="form-header-custom">
+                <h2>Optimize Your Harvest!</h2>
+                <p>Provide your field details for expert crop recommendations.</p>
+            </div>
+
+            <div class="form-steps" id="formStepsNav">
+                <div class="form-step-item active" data-step="1">
+                    <span class="step-icon">🌱</span>Soil Info
                 </div>
-                <div class="card-body p-4">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    <form method="POST" novalidate id="cropRecommendationForm">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
-                        
-                        <!-- Soil Information Section -->
-                        <div class="section-header">
-                            <h5 class="text-success">🌱 Soil Information</h5>
-                            <hr class="text-success">
-                        </div>
-                        <div class="form-row">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.soil_texture.id_for_label }}" class="form-label">
-                                        🏔️ {{ form.soil_texture.label }}
-                                    </label>
-                                    {{ form.soil_texture }}
-                                    {% if form.soil_texture.help_text %}
-                                        <div class="form-text text-muted">{{ form.soil_texture.help_text }}</div>
-                                    {% endif %}
-                                    {% if form.soil_texture.errors %}
-                                        <div class="text-danger small">{{ form.soil_texture.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.soil_ph.id_for_label }}" class="form-label">
-                                        ⚖️ {{ form.soil_ph.label }}
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">pH</span>
-                                        {{ form.soil_ph }}
-                                    </div>
-                                    <div class="form-text text-muted">Typical range: 4.0-9.0 (7.0 is neutral)</div>
-                                    {% if form.soil_ph.errors %}
-                                        <div class="text-danger small">{{ form.soil_ph.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.organic_matter.id_for_label }}" class="form-label">
-                                        🍃 {{ form.organic_matter.label }}
-                                    </label>
-                                    {{ form.organic_matter }}
-                                    {% if form.organic_matter.errors %}
-                                        <div class="text-danger small">{{ form.organic_matter.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.drainage_status.id_for_label }}" class="form-label">
-                                        💧 {{ form.drainage_status.label }}
-                                    </label>
-                                    {{ form.drainage_status }}
-                                    {% if form.drainage_status.errors %}
-                                        <div class="text-danger small">{{ form.drainage_status.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Climate Information Section -->
-                        <div class="section-header">
-                            <h5 class="text-info">🌦️ Climate Information</h5>
-                            <hr class="text-info">
-                        </div>
-                        <div class="form-row">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.rainfall_mm.id_for_label }}" class="form-label">
-                                        🌧️ {{ form.rainfall_mm.label }}
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">🌧️</span>
-                                        {{ form.rainfall_mm }}
-                                        <span class="input-group-text">mm</span>
-                                    </div>
-                                    <div class="form-text text-muted">Annual rainfall in millimeters</div>
-                                    {% if form.rainfall_mm.errors %}
-                                        <div class="text-danger small">{{ form.rainfall_mm.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.avg_temperature.id_for_label }}" class="form-label">
-                                        🌡️ {{ form.avg_temperature.label }}
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">🌡️</span>
-                                        {{ form.avg_temperature }}
-                                        <span class="input-group-text">°C</span>
-                                    </div>
-                                    <div class="form-text text-muted">Average temperature during growing season</div>
-                                    {% if form.avg_temperature.errors %}
-                                        <div class="text-danger small">{{ form.avg_temperature.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Crop Planning Section -->
-                        <div class="section-header">
-                            <h5 class="text-warning">📅 Crop Planning</h5>
-                            <hr class="text-warning">
-                        </div>
-                        <div class="form-row">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.season.id_for_label }}" class="form-label">
-                                        📅 {{ form.season.label }}
-                                    </label>
-                                    {{ form.season }}
-                                    {% if form.season.errors %}
-                                        <div class="text-danger small">{{ form.season.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.previous_crop.id_for_label }}" class="form-label">
-                                        🔄 {{ form.previous_crop.label }}
-                                    </label>
-                                    {{ form.previous_crop }}
-                                    <div class="form-text text-muted">Optional: Helps with crop rotation recommendations</div>
-                                    {% if form.previous_crop.errors %}
-                                        <div class="text-danger small">{{ form.previous_crop.errors|striptags }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Submit Button -->
-                        <div class="button-container d-flex justify-content-center gap-3 mt-5">
-                            <button type="submit" class="btn btn-submit" id="submitBtn">
-                                <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner"></span>
-                                🔍 Get My Recommendations
-                            </button>
-                            <a href="{% url 'past_recommendations' %}" class="btn btn-outline">
-                                📋 View History
-                            </a>
-                        </div>
-                    </form>
+                <div class="form-step-item" data-step="2">
+                    <span class="step-icon">🌦️</span>Climate Data
+                </div>
+                <div class="form-step-item" data-step="3">
+                    <span class="step-icon">📅</span>Planning
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Help Section -->
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
-            <div class="help-card">
-                <div class="card-body">
-                    <h5 class="text-center mb-4">💡 Need Help?</h5>
-                    <div class="row">
-                        <div class="col-md-4 text-center mb-3 help-item">
-                            <div class="help-icon text-success">🌱</div>
-                            <h6 class="help-title">Soil Texture</h6>
-                            <div class="help-text">
-                                Sandy: Drains fast, gritty feel<br>
-                                Clay: Sticky, holds water<br>
-                                Loamy: Best of both worlds
+
+            <div class="form-body-custom">
+                <form method="POST" novalidate id="cropRecommendationForm">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <!-- Step 1: Soil Information -->
+                    <div class="form-step-content active" data-step="1">
+                        <div class="row g-3">
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.soil_texture.id_for_label }}" class="form-label-custom">
+                                    Soil Texture
+                                </label>
+                                {{ form.soil_texture|add_class:"form-select-custom" }}
+                                {% if form.soil_texture.help_text %}<div class="form-text">{{ form.soil_texture.help_text }}</div>{% endif %}
+                                {% if form.soil_texture.errors %}<div class="text-danger small">{{ form.soil_texture.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.soil_ph.id_for_label }}" class="form-label-custom">
+                                    Soil pH
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text-custom"><i class="fas fa-balance-scale"></i></span>
+                                    {{ form.soil_ph|add_class:"form-control-custom" }}
+                                </div>
+                                <div class="form-text">Typical range: 4.0-9.0 (7.0 is neutral)</div>
+                                {% if form.soil_ph.errors %}<div class="text-danger small">{{ form.soil_ph.errors|striptags }}</div>{% endif %}
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3 help-item">
-                            <div class="help-icon text-info">💧</div>
-                            <h6 class="help-title">Drainage</h6>
-                            <div class="help-text">
-                                Well Drained: No standing water<br>
-                                Moderate: Drains in 4-6 hours<br>
-                                Poor: Water stays >24 hours
+                        <div class="row g-3">
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.organic_matter.id_for_label }}" class="form-label-custom">
+                                    Organic Matter Level
+                                </label>
+                                {{ form.organic_matter|add_class:"form-select-custom" }}
+                                {% if form.organic_matter.errors %}<div class="text-danger small">{{ form.organic_matter.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.drainage_status.id_for_label }}" class="form-label-custom">
+                                    Drainage Status
+                                </label>
+                                {{ form.drainage_status|add_class:"form-select-custom" }}
+                                {% if form.drainage_status.errors %}<div class="text-danger small">{{ form.drainage_status.errors|striptags }}</div>{% endif %}
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3 help-item">
-                            <div class="help-icon text-warning">📅</div>
-                            <h6 class="help-title">Seasons</h6>
-                            <div class="help-text">
-                                Kharif: Monsoon (Jun-Oct)<br>
-                                Rabi: Winter (Oct-Mar)<br>
-                                Zaid: Summer (Mar-Jun)
-                            </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="btn btn-outline-custom" disabled>Previous</button>
+                            <button type="button" class="btn btn-custom" data-next-step>Next: Climate Data</button>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Step 2: Climate Information -->
+                    <div class="form-step-content" data-step="2">
+                        <div class="row g-3">
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.rainfall_mm.id_for_label }}" class="form-label-custom">
+                                    Average Annual Rainfall
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text-custom"><i class="fas fa-cloud-rain"></i></span>
+                                    {{ form.rainfall_mm|add_class:"form-control-custom" }}
+                                    <span class="input-group-text-custom">mm</span>
+                                </div>
+                                <div class="form-text">Annual rainfall in millimeters</div>
+                                {% if form.rainfall_mm.errors %}<div class="text-danger small">{{ form.rainfall_mm.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.avg_temperature.id_for_label }}" class="form-label-custom">
+                                    Average Temperature
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text-custom"><i class="fas fa-thermometer-half"></i></span>
+                                    {{ form.avg_temperature|add_class:"form-control-custom" }}
+                                    <span class="input-group-text-custom">°C</span>
+                                </div>
+                                <div class="form-text">Average temperature during growing season</div>
+                                {% if form.avg_temperature.errors %}<div class="text-danger small">{{ form.avg_temperature.errors|striptags }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="btn btn-outline-custom" data-prev-step>Previous: Soil Info</button>
+                            <button type="button" class="btn btn-custom" data-next-step>Next: Planning</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Crop Planning -->
+                    <div class="form-step-content" data-step="3">
+                        <div class="row g-3">
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.season.id_for_label }}" class="form-label-custom">
+                                    Current Season
+                                </label>
+                                {{ form.season|add_class:"form-select-custom" }}
+                                {% if form.season.errors %}<div class="text-danger small">{{ form.season.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 form-group-custom">
+                                <label for="{{ form.previous_crop.id_for_label }}" class="form-label-custom">
+                                    Previous Crop (Optional)
+                                </label>
+                                {{ form.previous_crop|add_class:"form-select-custom" }}
+                                <div class="form-text">Helps with crop rotation recommendations</div>
+                                {% if form.previous_crop.errors %}<div class="text-danger small">{{ form.previous_crop.errors|striptags }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button type="button" class="btn btn-outline-custom" data-prev-step>Previous: Climate Data</button>
+                            <button type="submit" class="btn btn-custom" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner"></span>
+                                Get My Recommendations
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
+</section>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    // Add loading state to form submission
-    document.getElementById('cropRecommendationForm').addEventListener('submit', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const formStepsNav = document.getElementById('formStepsNav');
+    const formStepItems = formStepsNav.querySelectorAll('.form-step-item');
+    const formStepContents = document.querySelectorAll('.form-step-content');
+    const form = document.getElementById('cropRecommendationForm');
+    let currentStep = 1;
+
+    function showStep(step) {
+        // Deactivate all step items and contents
+        formStepItems.forEach(item => item.classList.remove('active'));
+        formStepContents.forEach(content => {
+            content.classList.remove('slide-enter-active', 'slide-leave-active');
+            content.style.display = 'none'; // Ensure it's hidden before animation
+        });
+
+        // Activate current step item and content
+        const activeStepItem = document.querySelector(`.form-step-item[data-step="${step}"]`);
+        const activeStepContent = document.querySelector(`.form-step-content[data-step="${step}"]`);
+        
+        if (activeStepItem) activeStepItem.classList.add('active');
+        if (activeStepContent) {
+            // Apply slide-in animation
+            activeStepContent.style.display = 'block';
+            activeStepContent.classList.add('slide-enter-active');
+            currentStep = step;
+        }
+    }
+
+    function goToNextStep() {
+        if (validateCurrentStep()) {
+            const nextStep = currentStep + 1;
+            if (nextStep <= formStepContents.length) {
+                // Apply slide-out animation to current step
+                const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
+                if (currentContent) {
+                    currentContent.classList.add('slide-leave-active');
+                    currentContent.addEventListener('animationend', () => {
+                        currentContent.style.display = 'none';
+                        showStep(nextStep);
+                    }, { once: true });
+                } else {
+                    showStep(nextStep); // Fallback if no animation
+                }
+            }
+        }
+    }
+
+    function goToPrevStep() {
+        const prevStep = currentStep - 1;
+        if (prevStep >= 1) {
+            // No slide-out needed for previous, directly show prev
+            const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
+            if (currentContent) {
+                currentContent.classList.remove('slide-enter-active'); // Remove any lingering enter animation
+                currentContent.style.display = 'none';
+            }
+            showStep(prevStep); // Simply show the previous step, it will slide in from left
+        }
+    }
+
+    function validateCurrentStep() {
+        const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
+        if (!currentContent) return false;
+
+        let isValid = true;
+        const inputs = currentContent.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (!input.checkValidity()) {
+                isValid = false;
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            }
+        });
+        return isValid;
+    }
+
+    // Attach event listeners to navigation buttons
+    document.querySelectorAll('[data-next-step]').forEach(button => {
+        button.addEventListener('click', goToNextStep);
+    });
+
+    document.querySelectorAll('[data-prev-step]').forEach(button => {
+        button.addEventListener('click', goToPrevStep);
+    });
+
+    // Attach event listeners to step navigation items
+    formStepItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const step = parseInt(this.dataset.step);
+            if (step < currentStep) { // Allow going back without validation
+                 // Apply slide-out animation to current step before switching to previous
+                const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
+                if (currentContent) {
+                    currentContent.classList.add('slide-leave-active');
+                    currentContent.addEventListener('animationend', () => {
+                        currentContent.style.display = 'none';
+                        showStep(step);
+                    }, { once: true });
+                } else {
+                    showStep(step);
+                }
+            } else if (step > currentStep) {
+                // If trying to go forward, validate current step
+                if (validateCurrentStep()) {
+                     // Apply slide-out animation to current step
+                    const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
+                    if (currentContent) {
+                        currentContent.classList.add('slide-leave-active');
+                        currentContent.addEventListener('animationend', () => {
+                            currentContent.style.display = 'none';
+                            showStep(step);
+                        }, { once: true });
+                    } else {
+                        showStep(step);
+                    }
+                }
+            }
+        });
+    });
+
+    // Handle form submission with loading state
+    form.addEventListener('submit', function(event) {
+        if (!validateCurrentStep()) {
+            event.preventDefault(); // Stop submission if validation fails
+            return;
+        }
+
         const submitBtn = document.getElementById('submitBtn');
         const spinner = document.getElementById('submitSpinner');
         
@@ -720,63 +548,9 @@
         spinner.classList.remove('d-none');
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing Your Field...';
     });
-    
-    // Add form validation feedback
-    const form = document.getElementById('cropRecommendationForm');
-    const inputs = form.querySelectorAll('input, select');
-    
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.checkValidity()) {
-                this.classList.add('is-valid');
-                this.classList.remove('is-invalid');
-            } else {
-                this.classList.add('is-invalid');
-                this.classList.remove('is-valid');
-            }
-        });
-    });
-    
-    // Scroll animations
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
-            }
-        });
-    }, observerOptions);
-    
-    // Observe all elements that should animate
-    document.addEventListener('DOMContentLoaded', function() {
-        // Main card
-        const mainCard = document.querySelector('.recommendation-card');
-        if (mainCard) observer.observe(mainCard);
-        
-        // Section headers
-        const sectionHeaders = document.querySelectorAll('.section-header');
-        sectionHeaders.forEach(header => observer.observe(header));
-        
-        // Form rows
-        const formRows = document.querySelectorAll('.form-row');
-        formRows.forEach(row => observer.observe(row));
-        
-        // Button container
-        const buttonContainer = document.querySelector('.button-container');
-        if (buttonContainer) observer.observe(buttonContainer);
-        
-        // Help card
-        const helpCard = document.querySelector('.help-card');
-        if (helpCard) observer.observe(helpCard);
-        
-        // Help items
-        const helpItems = document.querySelectorAll('.help-item');
-        helpItems.forEach(item => observer.observe(item));
-    });
+
+    // Initial display for the first step
+    showStep(currentStep);
+});
 </script>
 {% endblock %}
