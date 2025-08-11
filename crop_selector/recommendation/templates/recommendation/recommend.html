@@ -1,546 +1,1075 @@
-{% load static %}
+<!-- recommend.html -->
 {% extends 'recommendation/base.html' %}
-{% block title %}Get Crop Recommendations | Crop Selector{% endblock %}
+{% load widget_tweaks %}
+{% load form_tags %}
+{{ form.field_name|add_class:"form-control" }}
 
+{% block title %}Get Crop Recommendations | Crop Selector{% endblock %}
 {% block extra_head %}
 <style>
-    /* New styles for multi-step form and enhanced aesthetics */
+    /* Modern minimalistic Apple-inspired design */
     :root {
-        --form-step-indicator-bg: #e9ecef;
-        --form-step-indicator-active-bg: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
-        --form-step-indicator-text: #6c757d;
-        --form-step-indicator-active-text: #fff;
-        --form-card-bg: rgba(255, 255, 255, 0.98);
-        --form-card-border: rgba(0, 0, 0, 0.1);
-        --form-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        --form-input-bg: rgba(248, 249, 250, 0.8);
-        --form-input-border: rgba(0, 0, 0, 0.15);
-        --form-input-focus-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
-    }
-
-    [data-bs-theme="dark"] {
-        --form-step-indicator-bg: #495057;
-        --form-step-indicator-active-bg: linear-gradient(135deg, #388E3C 0%, #689F38 100%);
-        --form-step-indicator-text: #dee2e6;
-        --form-step-indicator-active-text: #fff;
-        --form-card-bg: rgba(33, 37, 41, 0.95);
-        --form-card-border: rgba(255, 255, 255, 0.1);
-        --form-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        --form-input-bg: rgba(52, 58, 64, 0.7);
-        --form-input-border: rgba(255, 255, 255, 0.15);
-        --form-input-focus-shadow: 0 0 0 0.25rem rgba(139, 195, 74, 0.35);
-    }
-
-    .recommendation-form-section {
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        padding: 4rem 0;
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.8) 100%);
-        background-size: cover;
-        background-position: center;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-
-    [data-bs-theme="dark"] .recommendation-form-section {
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%);
-        background-size: cover;
-        background-position: center;
-    }
-
-    .form-container-custom {
-        max-width: 800px;
-        margin: 0 auto;
-        background: var(--form-card-bg);
-        border-radius: 20px;
-        box-shadow: var(--form-card-shadow);
-        border: 1px solid var(--form-card-border);
-        overflow: hidden;
-        animation: fadeInUp 0.8s ease-out;
-    }
-
-    .form-header-custom {
-        background: var(--form-step-indicator-active-bg); /* Use the same gradient as active step */
-        color: var(--form-step-indicator-active-text);
-        padding: 2rem 1.5rem;
-        text-align: center;
-        position: relative;
-    }
-
-    .form-header-custom h2 {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        font-size: 2.2rem;
-    }
-
-    .form-header-custom p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
-
-    .form-steps {
-        display: flex;
-        justify-content: center;
-        padding: 1.5rem 1rem;
-        background: var(--form-step-indicator-bg);
-        border-bottom: 1px solid var(--form-card-border);
-    }
-
-    .form-step-item {
-        flex: 1;
-        text-align: center;
-        cursor: pointer;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        position: relative;
-        color: var(--form-step-indicator-text);
-        font-weight: 600;
-        font-size: 0.95rem;
-        margin: 0 0.5rem;
-    }
-
-    .form-step-item.active {
-        background: var(--form-step-indicator-active-bg);
-        color: var(--form-step-indicator-active-text);
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        transform: translateY(-3px);
-    }
-
-    .form-step-item:hover:not(.active) {
-        background: rgba(var(--primary-color-rgb), 0.1);
-        color: var(--primary-color);
+        --primary-gradient: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+        --accent-color: #FF5722;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --bg-light: #f8f9fa;
+        --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        --card-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        --text-overlay: rgba(255, 255, 255, 0.9);
+        --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
     
-    .form-step-item .step-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
+    [data-bs-theme="dark"] {
+        --text-primary: #f8f9fa;
+        --text-secondary: #adb5bd;
+        --bg-light: #212529;
+        --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        --card-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        --text-overlay: rgba(0, 0, 0, 0.8);
+        --text-shadow: 0 1px 3px rgba(255, 255, 255, 0.2);
     }
-
-    .form-body-custom {
-        padding: 2rem;
-        position: relative;
-        overflow: hidden; /* For slide animation */
-    }
-
-    .form-step-content {
-        display: none;
-        animation: fadeIn 0.5s ease-out;
-    }
-
-    .form-step-content.active {
-        display: block;
-    }
-
-    .form-group-custom {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-label-custom {
-        font-weight: 600;
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         color: var(--text-primary);
-        margin-bottom: 0.5rem;
-        display: block;
-        font-size: 1.05rem;
+        background-color: var(--bg-light);
+        overflow-x: hidden;
+        position: relative;
     }
-
-    .form-control-custom, .form-select-custom {
-        border-radius: 10px;
-        border: 1px solid var(--form-input-border);
+    
+    /* Enhanced text visibility with background */
+    .text-overlay {
+        position: relative;
+        z-index: 10;
+    }
+    
+    .text-overlay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--text-overlay);
+        border-radius: inherit;
+        z-index: -1;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        padding: 5rem 0;
+        overflow: hidden;
+    }
+    
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(139, 195, 74, 0.1) 100%);
+        z-index: -1;
+    }
+    
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease forwards;
+        text-shadow: var(--text-shadow);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease 0.2s forwards;
+        text-shadow: var(--text-shadow);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-cta {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease 0.4s forwards;
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* About Section */
+    .about-section {
+        padding: 5rem 0;
+        position: relative;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    
+    [data-bs-theme="dark"] .about-section {
+        background: rgba(33, 37, 41, 0.8);
+    }
+    
+    .about-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .about-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .about-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+        color: var(--text-primary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .about-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+    
+    .about-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3rem;
+        align-items: center;
+    }
+    
+    .about-text {
+        flex: 1;
+        min-width: 300px;
+    }
+    
+    .about-description {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        text-shadow: var(--text-shadow);
+    }
+    
+    .about-features {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .about-feature {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .about-feature-icon {
+        margin-right: 1rem;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+    
+    .about-image {
+        flex: 1;
+        min-width: 300px;
+        position: relative;
+    }
+    
+    .about-image-container {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transform: perspective(1000px) rotateY(-15deg);
+        transition: transform 0.8s ease;
+    }
+    
+    .about-image-container:hover {
+        transform: perspective(1000px) rotateY(0);
+    }
+    
+    .about-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    /* Form Section */
+    .form-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 249, 250, 0.8) 100%);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        position: relative;
+    }
+    
+    [data-bs-theme="dark"] .form-section {
+        background: linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.85) 100%);
+    }
+    
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .form-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: var(--text-shadow);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .form-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+        text-shadow: var(--text-shadow);
+    }
+    
+    .recommendation-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: all 0.5s ease;
+        opacity: 0;
+        transform: translateY(50px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .recommendation-card {
+        background: rgba(33, 37, 41, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .recommendation-card.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .recommendation-card:hover {
+        box-shadow: var(--card-hover-shadow);
+        transform: translateY(-5px);
+    }
+    
+    .card-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+        animation: pulse 15s infinite alternate;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    .card-header h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card-header p {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 1;
+        opacity: 0.9;
+    }
+    
+    .card-body {
+        padding: 2.5rem;
+    }
+    
+    .section-header {
+        margin-bottom: 2rem;
+        position: relative;
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    
+    .section-header.animate-in {
+        animation: slideInLeft 0.6s ease forwards;
+    }
+    
+    .section-header h5 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .section-header hr {
+        height: 2px;
+        opacity: 0.6;
+        border: none;
+        background: var(--primary-gradient);
+        width: 0;
+        margin-top: 0.5rem;
+    }
+    
+    .section-header.animate-in hr {
+        animation: expandWidth 1s ease 0.3s forwards;
+    }
+    
+    .form-row {
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    .form-row.animate-in {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         padding: 0.75rem 1rem;
         font-size: 1rem;
-        background: var(--form-input-bg);
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
         color: var(--text-primary);
+    }
+    
+    [data-bs-theme="dark"] .form-control, 
+    [data-bs-theme="dark"] .form-select {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text-primary);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.2);
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+    
+    [data-bs-theme="dark"] .form-control:focus, 
+    [data-bs-theme="dark"] .form-select:focus {
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.3);
+    }
+    
+    .input-group {
+        border-radius: 12px;
+        overflow: hidden;
         transition: all 0.3s ease;
     }
-
-    .form-control-custom::placeholder {
-        color: var(--text-muted);
-        opacity: 0.7;
+    
+    .input-group:focus-within {
+        transform: translateY(-2px);
+        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.2);
     }
-
-    .form-control-custom:focus, .form-select-custom:focus {
-        border-color: var(--primary-color);
-        box-shadow: var(--form-input-focus-shadow);
-        background: var(--form-card-bg); /* A bit brighter on focus */
-        transform: translateY(-1px);
-    }
-
-    [data-bs-theme="dark"] .form-control-custom:focus, [data-bs-theme="dark"] .form-select-custom:focus {
-        background: var(--form-input-bg);
-    }
-
-    .input-group-text-custom {
+    
+    .input-group-text {
         background: rgba(76, 175, 80, 0.1);
-        border: 1px solid var(--form-input-border);
+        border: 1px solid rgba(76, 175, 80, 0.2);
         color: var(--primary-color);
-        border-radius: 10px 0 0 10px;
+        border-radius: 12px 0 0 12px;
+        padding: 0.75rem 1rem;
     }
-    [data-bs-theme="dark"] .input-group-text-custom {
-        background: rgba(139, 195, 74, 0.15);
+    
+    [data-bs-theme="dark"] .input-group-text {
+        background: rgba(76, 175, 80, 0.2);
+        border-color: rgba(76, 175, 80, 0.3);
+        color: #8BC34A;
     }
-
-    .btn-custom {
+    
+    .form-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+        text-shadow: var(--text-shadow);
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    .button-container.animate-in {
+        animation: fadeInUp 0.6s ease 0.2s forwards;
+    }
+    
+    .btn-submit {
         background: var(--primary-gradient);
         border: none;
         border-radius: 50px;
         font-weight: 600;
-        padding: 0.8rem 2rem;
-        font-size: 1rem;
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
         color: white;
         transition: all 0.3s ease;
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
     }
-
-    .btn-custom:hover {
+    
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.6s;
+    }
+    
+    .btn-submit:hover::before {
+        transform: translateX(0);
+    }
+    
+    .btn-submit:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(76, 175, 80, 0.45);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
         color: white;
     }
-
-    .btn-outline-custom {
+    
+    .btn-outline {
         border-radius: 50px;
         font-weight: 600;
-        padding: 0.8rem 2rem;
-        font-size: 1rem;
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
         transition: all 0.3s ease;
         border: 2px solid var(--primary-color);
         color: var(--primary-color);
         background: transparent;
     }
-
-    .btn-outline-custom:hover {
+    
+    .btn-outline:hover {
         transform: translateY(-3px);
         background: rgba(76, 175, 80, 0.1);
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
         color: var(--primary-color);
     }
-
-    .navigation-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2rem;
+    
+    /* Help Section */
+    .help-section {
+        padding: 5rem 0;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
-
+    
+    [data-bs-theme="dark"] .help-section {
+        background: rgba(33, 37, 41, 0.8);
+    }
+    
+    .help-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .help-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .help-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+        color: var(--text-primary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .help-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+    
+    .help-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+    }
+    
+    .help-card {
+        flex: 1;
+        min-width: 300px;
+        max-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: all 0.5s ease;
+        opacity: 0;
+        transform: translateY(30px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .help-card {
+        background: rgba(33, 37, 41, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .help-card.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .help-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-hover-shadow);
+    }
+    
+    .help-card-header {
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    [data-bs-theme="dark"] .help-card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .help-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .help-card:hover .help-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .help-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+        text-shadow: var(--text-shadow);
+    }
+    
+    .help-card-body {
+        padding: 1.5rem;
+    }
+    
+    .help-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin-bottom: 0;
+        text-shadow: var(--text-shadow);
+    }
+    
     /* Animations */
     @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { 
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(50px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideOutLeft {
-        from { opacity: 1; transform: translateX(0); }
-        to { opacity: 0; transform: translateX(-50px); }
-    }
+    
     @keyframes slideInLeft {
-        from { opacity: 0; transform: translateX(-50px); }
-        to { opacity: 1; transform: translateX(0); }
+        from { 
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
-    @keyframes slideOutRight {
-        from { opacity: 1; transform: translateX(0); }
-        to { opacity: 0; transform: translateX(50px); }
+    
+    @keyframes expandWidth {
+        from { width: 0; }
+        to { width: 100%; }
     }
-
-    /* Specific animations for form steps */
-    .slide-enter-active { animation: slideInRight 0.6s ease-out forwards; }
-    .slide-leave-active { animation: slideOutLeft 0.6s ease-out forwards; position: absolute; width: 100%; top: 0; left: 0;} /* Important for smooth overlap */
-
+    
+    /* Floating animation for background elements */
+    .floating {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(40px);
+        opacity: 0.4;
+        z-index: -1;
+    }
+    
+    .floating-1 {
+        width: 300px;
+        height: 300px;
+        background: rgba(76, 175, 80, 0.3);
+        top: 10%;
+        left: 5%;
+        animation: float 15s infinite ease-in-out;
+    }
+    
+    .floating-2 {
+        width: 200px;
+        height: 200px;
+        background: rgba(139, 195, 74, 0.3);
+        bottom: 10%;
+        right: 5%;
+        animation: float 12s infinite ease-in-out;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(10deg); }
+    }
+    
+    /* Text visibility improvements */
+    .text-enhanced {
+        position: relative;
+        z-index: 10;
+    }
+    
+    .text-enhanced::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--text-overlay);
+        border-radius: inherit;
+        z-index: -1;
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .form-steps {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .about-title, .form-title, .help-title {
+            font-size: 2rem;
+        }
+        
+        .about-content {
+            flex-direction: column;
+        }
+        
+        .help-cards {
             flex-direction: column;
             align-items: center;
         }
-        .form-step-item {
-            width: 90%;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
+        
+        .help-card {
+            max-width: 100%;
         }
-        .form-body-custom {
-            padding: 1.5rem;
+        
+        .button-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-submit, .btn-outline {
+            width: 100%;
+            max-width: 300px;
         }
     }
 </style>
 {% endblock %}
-
 {% block content %}
-<section class="recommendation-form-section" style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.8) 100%), url('{{ background_image_url }}');">
-    <div class="container">
-        <div class="form-container-custom">
-            <div class="form-header-custom">
-                <h2>Optimize Your Harvest!</h2>
-                <p>Provide your field details for expert crop recommendations.</p>
-            </div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="floating floating-1"></div>
+    <div class="floating floating-2"></div>
+    <div class="hero-content text-enhanced">
+        <h1 class="hero-title">Smart Crop Recommendations</h1>
+        <p class="hero-subtitle">Get personalized crop suggestions based on your land, soil, and climate conditions</p>
+        <div class="hero-cta">
+            <a href="#recommendation-form" class="btn btn-submit">Get Started</a>
+        </div>
+    </div>
+</section>
 
-            <div class="form-steps" id="formStepsNav">
-                <div class="form-step-item active" data-step="1">
-                    <span class="step-icon">🌱</span>Soil Info
-                </div>
-                <div class="form-step-item" data-step="2">
-                    <span class="step-icon">🌦️</span>Climate Data
-                </div>
-                <div class="form-step-item" data-step="3">
-                    <span class="step-icon">📅</span>Planning
+<!-- About Section -->
+<section class="about-section">
+    <div class="about-container">
+        <div class="about-header">
+            <h2 class="about-title">About Crop Selector</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p class="about-description">
+                    Crop Selector is an intelligent agricultural platform that leverages advanced AI algorithms to provide farmers with personalized crop recommendations. Our system analyzes multiple factors including soil composition, climate conditions, seasonal patterns, and historical crop data to suggest the most suitable crops for your specific land.
+                </p>
+                <ul class="about-features">
+                    <li class="about-feature">
+                        <span class="about-feature-icon">🌱</span>
+                        <span>AI-powered recommendations based on scientific data</span>
+                    </li>
+                    <li class="about-feature">
+                        <span class="about-feature-icon">📊</span>
+                        <span>Comprehensive analysis of soil and climate conditions</span>
+                    </li>
+                    <li class="about-feature">
+                        <span class="about-feature-icon">🔄</span>
+                        <span>Crop rotation suggestions for sustainable farming</span>
+                    </li>
+                    <li class="about-feature">
+                        <span class="about-feature-icon">📈</span>
+                        <span>Track your farming history and improve yields</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="about-image">
+                <div class="about-image-container">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Farm field with crops">
                 </div>
             </div>
+        </div>
+    </div>
+</section>
 
-            <div class="form-body-custom">
+<!-- Form Section -->
+<section class="form-section" id="recommendation-form">
+    <div class="form-container">
+        <div class="form-header">
+            <h2 class="form-title">Get Your Crop Recommendations</h2>
+            <p class="form-subtitle">Fill in your field details to receive personalized crop suggestions</p>
+        </div>
+        
+        <div class="recommendation-card">
+            <div class="card-header">
+                <h3>🌿 Crop Recommendation Form</h3>
+                <p>Provide accurate information for the best results</p>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 <form method="POST" novalidate id="cropRecommendationForm">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
-
-                    <!-- Step 1: Soil Information -->
-                    <div class="form-step-content active" data-step="1">
-                        <div class="row g-3">
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.soil_texture.id_for_label }}" class="form-label-custom">
-                                    Soil Texture
+                    
+                    <!-- Soil Information Section -->
+                    <div class="section-header">
+                        <h5 class="text-success">🌱 Soil Information</h5>
+                        <hr class="text-success">
+                    </div>
+                    <div class="form-row">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.soil_texture.id_for_label }}" class="form-label">
+                                    🏔️ {{ form.soil_texture.label }}
                                 </label>
-                                {{ form.soil_texture|add_class:"form-select-custom" }}
-                                {% if form.soil_texture.help_text %}<div class="form-text">{{ form.soil_texture.help_text }}</div>{% endif %}
-                                {% if form.soil_texture.errors %}<div class="text-danger small">{{ form.soil_texture.errors|striptags }}</div>{% endif %}
+                                {{ form.soil_texture }}
+                                {% if form.soil_texture.help_text %}
+                                    <div class="form-text">{{ form.soil_texture.help_text }}</div>
+                                {% endif %}
+                                {% if form.soil_texture.errors %}
+                                    <div class="text-danger small">{{ form.soil_texture.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.soil_ph.id_for_label }}" class="form-label-custom">
-                                    Soil pH
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.soil_ph.id_for_label }}" class="form-label">
+                                    ⚖️ {{ form.soil_ph.label }}
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text-custom"><i class="fas fa-balance-scale"></i></span>
-                                    {{ form.soil_ph|add_class:"form-control-custom" }}
+                                    <span class="input-group-text">pH</span>
+                                    {{ form.soil_ph }}
                                 </div>
                                 <div class="form-text">Typical range: 4.0-9.0 (7.0 is neutral)</div>
-                                {% if form.soil_ph.errors %}<div class="text-danger small">{{ form.soil_ph.errors|striptags }}</div>{% endif %}
+                                {% if form.soil_ph.errors %}
+                                    <div class="text-danger small">{{ form.soil_ph.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.organic_matter.id_for_label }}" class="form-label-custom">
-                                    Organic Matter Level
-                                </label>
-                                {{ form.organic_matter|add_class:"form-select-custom" }}
-                                {% if form.organic_matter.errors %}<div class="text-danger small">{{ form.organic_matter.errors|striptags }}</div>{% endif %}
-                            </div>
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.drainage_status.id_for_label }}" class="form-label-custom">
-                                    Drainage Status
-                                </label>
-                                {{ form.drainage_status|add_class:"form-select-custom" }}
-                                {% if form.drainage_status.errors %}<div class="text-danger small">{{ form.drainage_status.errors|striptags }}</div>{% endif %}
-                            </div>
-                        </div>
-                        <div class="navigation-buttons">
-                            <button type="button" class="btn btn-outline-custom" disabled>Previous</button>
-                            <button type="button" class="btn btn-custom" data-next-step>Next: Climate Data</button>
                         </div>
                     </div>
-
-                    <!-- Step 2: Climate Information -->
-                    <div class="form-step-content" data-step="2">
-                        <div class="row g-3">
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.rainfall_mm.id_for_label }}" class="form-label-custom">
-                                    Average Annual Rainfall
+                    <div class="form-row">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.organic_matter.id_for_label }}" class="form-label">
+                                    🍃 {{ form.organic_matter.label }}
+                                </label>
+                                {{ form.organic_matter }}
+                                {% if form.organic_matter.errors %}
+                                    <div class="text-danger small">{{ form.organic_matter.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.drainage_status.id_for_label }}" class="form-label">
+                                    💧 {{ form.drainage_status.label }}
+                                </label>
+                                {{ form.drainage_status }}
+                                {% if form.drainage_status.errors %}
+                                    <div class="text-danger small">{{ form.drainage_status.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Climate Information Section -->
+                    <div class="section-header">
+                        <h5 class="text-info">🌦️ Climate Information</h5>
+                        <hr class="text-info">
+                    </div>
+                    <div class="form-row">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.rainfall_mm.id_for_label }}" class="form-label">
+                                    🌧️ {{ form.rainfall_mm.label }}
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text-custom"><i class="fas fa-cloud-rain"></i></span>
-                                    {{ form.rainfall_mm|add_class:"form-control-custom" }}
-                                    <span class="input-group-text-custom">mm</span>
+                                    <span class="input-group-text">🌧️</span>
+                                    {{ form.rainfall_mm }}
+                                    <span class="input-group-text">mm</span>
                                 </div>
                                 <div class="form-text">Annual rainfall in millimeters</div>
-                                {% if form.rainfall_mm.errors %}<div class="text-danger small">{{ form.rainfall_mm.errors|striptags }}</div>{% endif %}
+                                {% if form.rainfall_mm.errors %}
+                                    <div class="text-danger small">{{ form.rainfall_mm.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.avg_temperature.id_for_label }}" class="form-label-custom">
-                                    Average Temperature
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.avg_temperature.id_for_label }}" class="form-label">
+                                    🌡️ {{ form.avg_temperature.label }}
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text-custom"><i class="fas fa-thermometer-half"></i></span>
-                                    {{ form.avg_temperature|add_class:"form-control-custom" }}
-                                    <span class="input-group-text-custom">°C</span>
+                                    <span class="input-group-text">🌡️</span>
+                                    {{ form.avg_temperature }}
+                                    <span class="input-group-text">°C</span>
                                 </div>
                                 <div class="form-text">Average temperature during growing season</div>
-                                {% if form.avg_temperature.errors %}<div class="text-danger small">{{ form.avg_temperature.errors|striptags }}</div>{% endif %}
+                                {% if form.avg_temperature.errors %}
+                                    <div class="text-danger small">{{ form.avg_temperature.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="navigation-buttons">
-                            <button type="button" class="btn btn-outline-custom" data-prev-step>Previous: Soil Info</button>
-                            <button type="button" class="btn btn-custom" data-next-step>Next: Planning</button>
                         </div>
                     </div>
-
-                    <!-- Step 3: Crop Planning -->
-                    <div class="form-step-content" data-step="3">
-                        <div class="row g-3">
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.season.id_for_label }}" class="form-label-custom">
-                                    Current Season
+                    
+                    <!-- Crop Planning Section -->
+                    <div class="section-header">
+                        <h5 class="text-warning">📅 Crop Planning</h5>
+                        <hr class="text-warning">
+                    </div>
+                    <div class="form-row">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.season.id_for_label }}" class="form-label">
+                                    📅 {{ form.season.label }}
                                 </label>
-                                {{ form.season|add_class:"form-select-custom" }}
-                                {% if form.season.errors %}<div class="text-danger small">{{ form.season.errors|striptags }}</div>{% endif %}
+                                {{ form.season }}
+                                {% if form.season.errors %}
+                                    <div class="text-danger small">{{ form.season.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-6 form-group-custom">
-                                <label for="{{ form.previous_crop.id_for_label }}" class="form-label-custom">
-                                    Previous Crop (Optional)
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.previous_crop.id_for_label }}" class="form-label">
+                                    🔄 {{ form.previous_crop.label }}
                                 </label>
-                                {{ form.previous_crop|add_class:"form-select-custom" }}
-                                <div class="form-text">Helps with crop rotation recommendations</div>
-                                {% if form.previous_crop.errors %}<div class="text-danger small">{{ form.previous_crop.errors|striptags }}</div>{% endif %}
+                                {{ form.previous_crop }}
+                                <div class="form-text">Optional: Helps with crop rotation recommendations</div>
+                                {% if form.previous_crop.errors %}
+                                    <div class="text-danger small">{{ form.previous_crop.errors|striptags }}</div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="navigation-buttons">
-                            <button type="button" class="btn btn-outline-custom" data-prev-step>Previous: Climate Data</button>
-                            <button type="submit" class="btn btn-custom" id="submitBtn">
-                                <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner"></span>
-                                Get My Recommendations
-                            </button>
-                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="button-container">
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner"></span>
+                            🔍 Get My Recommendations
+                        </button>
+                        <a href="{% url 'past_recommendations' %}" class="btn btn-outline">
+                            📋 View History
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </section>
-{% endblock %}
 
+<!-- Help Section -->
+<section class="help-section">
+    <div class="help-container">
+        <div class="help-header">
+            <h2 class="help-title">Need Help?</h2>
+        </div>
+        <div class="help-cards">
+            <div class="help-card">
+                <div class="help-card-header">
+                    <div class="help-icon text-success">🌱</div>
+                    <h3 class="help-card-title">Soil Texture</h3>
+                </div>
+                <div class="help-card-body">
+                    <p class="help-text">
+                        <strong>Sandy:</strong> Drains fast, gritty feel<br>
+                        <strong>Clay:</strong> Sticky, holds water<br>
+                        <strong>Loamy:</strong> Best of both worlds
+                    </p>
+                </div>
+            </div>
+            
+            <div class="help-card">
+                <div class="help-card-header">
+                    <div class="help-icon text-info">💧</div>
+                    <h3 class="help-card-title">Drainage</h3>
+                </div>
+                <div class="help-card-body">
+                    <p class="help-text">
+                        <strong>Well Drained:</strong> No standing water<br>
+                        <strong>Moderate:</strong> Drains in 4-6 hours<br>
+                        <strong>Poor:</strong> Water stays >24 hours
+                    </p>
+                </div>
+            </div>
+            
+            <div class="help-card">
+                <div class="help-card-header">
+                    <div class="help-icon text-warning">📅</div>
+                    <h3 class="help-card-title">Seasons</h3>
+                </div>
+                <div class="help-card-body">
+                    <p class="help-text">
+                        <strong>Kharif:</strong> Monsoon (Jun-Oct)<br>
+                        <strong>Rabi:</strong> Winter (Oct-Mar)<br>
+                        <strong>Zaid:</strong> Summer (Mar-Jun)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const formStepsNav = document.getElementById('formStepsNav');
-    const formStepItems = formStepsNav.querySelectorAll('.form-step-item');
-    const formStepContents = document.querySelectorAll('.form-step-content');
-    const form = document.getElementById('cropRecommendationForm');
-    let currentStep = 1;
-
-    function showStep(step) {
-        // Deactivate all step items and contents
-        formStepItems.forEach(item => item.classList.remove('active'));
-        formStepContents.forEach(content => {
-            content.classList.remove('slide-enter-active', 'slide-leave-active');
-            content.style.display = 'none'; // Ensure it's hidden before animation
-        });
-
-        // Activate current step item and content
-        const activeStepItem = document.querySelector(`.form-step-item[data-step="${step}"]`);
-        const activeStepContent = document.querySelector(`.form-step-content[data-step="${step}"]`);
-        
-        if (activeStepItem) activeStepItem.classList.add('active');
-        if (activeStepContent) {
-            // Apply slide-in animation
-            activeStepContent.style.display = 'block';
-            activeStepContent.classList.add('slide-enter-active');
-            currentStep = step;
-        }
-    }
-
-    function goToNextStep() {
-        if (validateCurrentStep()) {
-            const nextStep = currentStep + 1;
-            if (nextStep <= formStepContents.length) {
-                // Apply slide-out animation to current step
-                const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
-                if (currentContent) {
-                    currentContent.classList.add('slide-leave-active');
-                    currentContent.addEventListener('animationend', () => {
-                        currentContent.style.display = 'none';
-                        showStep(nextStep);
-                    }, { once: true });
-                } else {
-                    showStep(nextStep); // Fallback if no animation
-                }
-            }
-        }
-    }
-
-    function goToPrevStep() {
-        const prevStep = currentStep - 1;
-        if (prevStep >= 1) {
-            // No slide-out needed for previous, directly show prev
-            const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
-            if (currentContent) {
-                currentContent.classList.remove('slide-enter-active'); // Remove any lingering enter animation
-                currentContent.style.display = 'none';
-            }
-            showStep(prevStep); // Simply show the previous step, it will slide in from left
-        }
-    }
-
-    function validateCurrentStep() {
-        const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
-        if (!currentContent) return false;
-
-        let isValid = true;
-        const inputs = currentContent.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            if (!input.checkValidity()) {
-                isValid = false;
-                input.classList.add('is-invalid');
-                input.classList.remove('is-valid');
-            } else {
-                input.classList.remove('is-invalid');
-                input.classList.add('is-valid');
-            }
-        });
-        return isValid;
-    }
-
-    // Attach event listeners to navigation buttons
-    document.querySelectorAll('[data-next-step]').forEach(button => {
-        button.addEventListener('click', goToNextStep);
-    });
-
-    document.querySelectorAll('[data-prev-step]').forEach(button => {
-        button.addEventListener('click', goToPrevStep);
-    });
-
-    // Attach event listeners to step navigation items
-    formStepItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const step = parseInt(this.dataset.step);
-            if (step < currentStep) { // Allow going back without validation
-                 // Apply slide-out animation to current step before switching to previous
-                const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
-                if (currentContent) {
-                    currentContent.classList.add('slide-leave-active');
-                    currentContent.addEventListener('animationend', () => {
-                        currentContent.style.display = 'none';
-                        showStep(step);
-                    }, { once: true });
-                } else {
-                    showStep(step);
-                }
-            } else if (step > currentStep) {
-                // If trying to go forward, validate current step
-                if (validateCurrentStep()) {
-                     // Apply slide-out animation to current step
-                    const currentContent = document.querySelector(`.form-step-content[data-step="${currentStep}"]`);
-                    if (currentContent) {
-                        currentContent.classList.add('slide-leave-active');
-                        currentContent.addEventListener('animationend', () => {
-                            currentContent.style.display = 'none';
-                            showStep(step);
-                        }, { once: true });
-                    } else {
-                        showStep(step);
-                    }
-                }
-            }
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
-
-    // Handle form submission with loading state
-    form.addEventListener('submit', function(event) {
-        if (!validateCurrentStep()) {
-            event.preventDefault(); // Stop submission if validation fails
-            return;
-        }
-
+    
+    // Add loading state to form submission
+    document.getElementById('cropRecommendationForm').addEventListener('submit', function() {
         const submitBtn = document.getElementById('submitBtn');
         const spinner = document.getElementById('submitSpinner');
         
@@ -548,9 +1077,78 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.classList.remove('d-none');
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing Your Field...';
     });
-
-    // Initial display for the first step
-    showStep(currentStep);
-});
+    
+    // Form validation feedback
+    const form = document.getElementById('cropRecommendationForm');
+    const inputs = form.querySelectorAll('input, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+    });
+    
+    // Scroll animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all elements that should animate
+    document.addEventListener('DOMContentLoaded', function() {
+        // Main card
+        const mainCard = document.querySelector('.recommendation-card');
+        if (mainCard) observer.observe(mainCard);
+        
+        // Section headers
+        const sectionHeaders = document.querySelectorAll('.section-header');
+        sectionHeaders.forEach(header => observer.observe(header));
+        
+        // Form rows
+        const formRows = document.querySelectorAll('.form-row');
+        formRows.forEach(row => observer.observe(row));
+        
+        // Button container
+        const buttonContainer = document.querySelector('.button-container');
+        if (buttonContainer) observer.observe(buttonContainer);
+        
+        // Help cards
+        const helpCards = document.querySelectorAll('.help-card');
+        helpCards.forEach((card, index) => {
+            // Add delay for each card
+            card.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(card);
+        });
+    });
+    
+    // Parallax effect for hero section
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const heroBg = document.querySelector('.hero-bg');
+        if (heroBg) {
+            heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+        }
+        
+        const floatingElements = document.querySelectorAll('.floating');
+        floatingElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            element.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    });
 </script>
 {% endblock %}

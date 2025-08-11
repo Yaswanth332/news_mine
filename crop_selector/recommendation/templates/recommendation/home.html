@@ -1,6 +1,11 @@
 #
 {% extends 'recommendation/base.html' %}
 {% load static %}
+{% load widget_tweaks %}
+{% load form_tags %}
+{{ form.field_name|add_class:"form-control" }}
+
+
 {% block title %}Home | Crop Selector{% endblock %}
 {% block content %}
 <!-- Hero Section with Parallax Effect -->

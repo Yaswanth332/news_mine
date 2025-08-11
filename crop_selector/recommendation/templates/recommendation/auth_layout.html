@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
+{% load form_tags %}
+{{ form.field_name|add_class:"form-control" }}
+
 
 {% block extra_head %}
 <style>
